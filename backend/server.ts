@@ -4,7 +4,6 @@ import "dotenv/config";
 import * as postmark from "postmark";
 import { ref, set, onValue, onChildAdded, onChildChanged } from "firebase/database";
 import db from "./firebase";
-import { link } from "fs";
 
 const RPC = process.env.RPC!;
 const POSTMARK_KEY = process.env.POSTMARK_KEY!;
