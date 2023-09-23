@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "ethers": "^6.7.1",
+    "firebase": "^10.3.1",
+    "postmark": "^3.0.19",
+    "vite-node": "^0.34.3"
+  },
+  "scripts": {
+    "dev": "vite-node server.ts"
+  }
+}
