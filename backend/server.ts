@@ -37,6 +37,7 @@ async function main() {
         linkAccounts(emailHash, account);
       }
     } else {
+      // These tasks are for when the server starts up. If any account was not linked (i.e server was down), it will be linked now. Improves redundancy.
       console.log("Checking if account is linked (startup task) (1/2)");
       async function runChecks() {
         if (snapshot.key && snapshot.val()) {
