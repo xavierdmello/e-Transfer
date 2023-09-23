@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import eTransferAbi from "./eTransferAbi";
 import "dotenv/config";
 import * as postmark from "postmark";
-import { ref, set, onValue, onChildAdded } from "firebase/database";
+import { ref, set, onValue, onChildAdded, onChildChanged } from "firebase/database";
 import db from "./firebase";
 
 const RPC = process.env.RPC!;
@@ -25,29 +25,36 @@ async function main() {
     initialDataLoaded = true;
   });
   onChildAdded(newAccountRef, (snapshot) => {
-    async function linkAccountsFunction() {
+    if (initialDataLoaded == true) {
       const emailHash = snapshot.key;
       const accountData = snapshot.val();
       const account = accountData.address;
 
-      const eTransferLinker = new ethers.Contract(eTransferAddress, eTransferAbi, signer);
-
-      console.log(
-        "Linking email hash " + emailHash + " to " + account + ". Balance: " + ethers.formatEther(await provider.getBalance(signer.address)),
-        " ETH."
-      );
-      await eTransferLinker.linkAccount(emailHash, account);
-      console.log("Linking done. Balance: ", ethers.formatEther(await provider.getBalance(signer.address)), " ETH.");
-    }
-
-    if (initialDataLoaded == true) {
-      linkAccountsFunction();
+      if (account && emailHash) {
+        linkAccounts(emailHash, account);
+      }
     }
   });
+  onChildChanged(newAccountRef, (snapshot) => {
+    const emailHash = snapshot.key;
+    const accountData = snapshot.val();
+    const account = accountData.address;
+
+    if (account && emailHash) {
+      linkAccounts(emailHash, account);
+    }
+  });
+  async function linkAccounts(emailHash: string, account: string) {
+    const eTransferLinker = new ethers.Contract(eTransferAddress, eTransferAbi, signer);
+
+    console.log("Linking email hash " + emailHash + " to " + account + ". Balance: " + ethers.formatEther(await provider.getBalance(signer.address)), " ETH.");
+    await eTransferLinker.linkAccount(emailHash, account);
+    console.log("Linking done. Balance: ", ethers.formatEther(await provider.getBalance(signer.address)), " ETH.");
+  }
 
   contract.on("TransferPending", (from, to, amount) => {
     onValue(ref(db, "users/" + to), (snapshot) => {
-      const toEmail = snapshot.val();
+      const toEmail = snapshot.val().email;
       client.sendEmail({
         From: "etransfer@xavierdmello.com",
         To: toEmail,
@@ -60,7 +67,7 @@ async function main() {
 
   contract.on("TransferSent", (from, to, amount, autodeposit) => {
     onValue(ref(db, "users/" + from), (snapshot) => {
-      const fromEmail = snapshot.val();
+      const fromEmail = snapshot.val().email;
       if (autodeposit === false) {
         client.sendEmail({
           From: "etransfer@xavierdmello.com",
@@ -79,7 +86,7 @@ async function main() {
         console.log("Sent transfer deposited automatically email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
 
         onValue(ref(db, "users/" + to), (snapshot) => {
-          const toEmail = snapshot.val();
+          const toEmail = snapshot.val().email;
           client.sendEmail({
             From: "etransfer@xavierdmello.com",
             To: toEmail,

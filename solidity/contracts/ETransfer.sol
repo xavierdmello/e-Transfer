@@ -2,7 +2,7 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-
+// Todo: add expiry date
 contract ETransfer {
     struct Transfer {
         bytes32 from;
@@ -46,6 +46,7 @@ contract ETransfer {
     address public linker;
     IERC20 public token;
     uint256 private version = 1;
+
     constructor(address _token) {
         linker = msg.sender;
         token = IERC20(_token);
@@ -55,14 +56,14 @@ contract ETransfer {
         return pendingTransfers;
     }
 
-    function setLinker(address newLinker) public /*onlyLinker*/ {
+    function setLinker(address newLinker) public onlyLinker {
         linker = newLinker;
     }
 
     function linkAccount(
         bytes32 emailHash,
         address account
-    ) public /*onlyLinker*/ {
+    ) public onlyLinker {
         linkedEmail[account] = emailHash;
     }
 

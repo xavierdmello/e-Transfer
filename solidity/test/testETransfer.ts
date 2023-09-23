@@ -9,8 +9,6 @@ function hashEmail(email: string): `0x${string}` {
 
 const MAX_INT = BigInt(2) ** BigInt(256) - BigInt(1);
 
-// TODO: Prevent Malicious Linking from a non-linker
-
 describe("ETransfer", function () {
   async function deployFixture() {
     const mail1 = "dmello_xavier7@hotmail.com";
@@ -44,6 +42,19 @@ describe("ETransfer", function () {
     const { etransfer, mail1, hmail1, account1 } = await loadFixture(deployFixture);
 
     expect(await etransfer.linkedEmail(account1.address)).to.equal(hmail1);
+  });
+
+  it("onlyLinker protection", async function () {
+    const { etransfer, mail1, hmail1, account1, account2 } = await loadFixture(deployFixture);
+
+    // Sanity check
+    await expect(etransfer.linkAccount("0x7465737400000000000000000000000000000000000000000000000000000000", ethers.ZeroAddress)).not.to.be.reverted;
+
+    const etransferbad = etransfer.connect(account2);
+
+    await expect(etransferbad.linkAccount("0x7465737400000000000000000000000000000000000000000000000000000000", ethers.ZeroAddress)).to.be.revertedWith(
+      "Only linker can call this function."
+    );
   });
 
   it("Sending tokens", async function () {
@@ -132,6 +143,6 @@ describe("ETransfer", function () {
 
     // Cancel
     etransfer = etransfer.connect(account3);
-    await expect(etransfer.cancelTransfer(0)).to.be.reverted
+    await expect(etransfer.cancelTransfer(0)).to.be.reverted;
   });
 });
