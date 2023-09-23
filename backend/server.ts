@@ -4,6 +4,7 @@ import "dotenv/config";
 import * as postmark from "postmark";
 import { ref, set, onValue, onChildAdded, onChildChanged } from "firebase/database";
 import db from "./firebase";
+import { link } from "fs";
 
 const RPC = process.env.RPC!;
 const POSTMARK_KEY = process.env.POSTMARK_KEY!;
@@ -12,6 +13,9 @@ const eTransferAddress = "0x047CbFe0a82cad48b0c672eF73475955d6c7a2f2";
 
 let client = new postmark.ServerClient(POSTMARK_KEY);
 
+// Order of events:
+// 1. On startup: server goes through all account in the database, makes sure they're linked, and if not, links them.
+// 2. Server goes into listening mode, and sends emails/links accounts as needed.
 async function main() {
   const provider = new ethers.WebSocketProvider(RPC);
   const contract = new ethers.Contract(eTransferAddress, eTransferAbi, provider);
@@ -33,6 +37,33 @@ async function main() {
       if (account && emailHash) {
         linkAccounts(emailHash, account);
       }
+    } else {
+      console.log("Checking if account is linked (startup task) (1/2)");
+      async function runChecks() {
+        if (snapshot.key && snapshot.val()) {
+          const emailHash = snapshot.key;
+          const accountData = snapshot.val();
+          const account = accountData.address;
+
+          if ("account && emailHash") {
+            try {
+              const isLinked: boolean = await isAccountLinked(account);
+
+              if (isLinked === false) {
+                console.log(`Account ${accountData.email} is not linked. Linking now. (2/2)`);
+                await linkAccounts(emailHash, account);
+              } else {
+                console.log(`Account ${accountData.email} is linked. All good. (2/2)`);
+              }
+            } catch (err) {
+              console.log("Error fetching isLinked. Potential RPC rate limit. Just gonna pretend this didn't happen :P");
+            }
+          } else {
+            console.log("User has not completed onboarding yet. All good. (2/2).");
+          }
+        }
+      }
+      runChecks();
     }
   });
   onChildChanged(newAccountRef, (snapshot) => {
@@ -50,6 +81,17 @@ async function main() {
     console.log("Linking email hash " + emailHash + " to " + account + ". Balance: " + ethers.formatEther(await provider.getBalance(signer.address)), " ETH.");
     await eTransferLinker.linkAccount(emailHash, account);
     console.log("Linking done. Balance: ", ethers.formatEther(await provider.getBalance(signer.address)), " ETH.");
+  }
+
+  async function isAccountLinked(address: string): Promise<boolean> {
+    const eTransfer = new ethers.Contract(eTransferAddress, eTransferAbi, signer);
+    const linkedAccount = await eTransfer.linkedEmail(address);
+    let isLinked = false;
+
+    if (linkedAccount !== null && linkedAccount !== "" && linkedAccount !== "0x0000000000000000000000000000000000000000000000000000000000000000") {
+      isLinked = true;
+    }
+    return isLinked;
   }
 
   contract.on("TransferPending", (from, to, amount) => {

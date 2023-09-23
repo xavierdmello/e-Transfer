@@ -44,8 +44,8 @@ import {
 } from "@chakra-ui/react";
 import { getRedirectResult } from "firebase/auth";
 
-const ETRANSFER_ADDRESS = "0x5Ec97C1Af51241c01D4c5b65B364Ad73c50BCc83";
-const TOKEN_ADDRESS = "0x15B1707025A04bB980D175d9854B2A1CE798B2CE";
+const ETRANSFER_ADDRESS = "0x047CbFe0a82cad48b0c672eF73475955d6c7a2f2";
+const TOKEN_ADDRESS = "0x04433318c6c76939dc1451600530195281Fa8858";
 function hashEmail(email: string): `0x${string}` {
   return keccak256(encodeAbiParameters(parseAbiParameters("string"), [email]));
 }
