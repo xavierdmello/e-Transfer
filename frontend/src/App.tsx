@@ -8,7 +8,7 @@ import eTransferAbi from "./abi/etransfer.ts";
 import tokenAbi from "./abi/token.ts";
 import { nanoid } from "nanoid";
 import db from "./firebase.ts";
-import { ref, update, set, onValue } from "firebase/database";
+import { ref, update, set, onValue, get } from "firebase/database";
 
 import {
   Button,
@@ -42,10 +42,10 @@ import {
   useDisclosure,
   Select,
 } from "@chakra-ui/react";
+import { getRedirectResult } from "firebase/auth";
 
-
-const ETRANSFER_ADDRESS = "0x047CbFe0a82cad48b0c672eF73475955d6c7a2f2";
-const TOKEN_ADDRESS = "0x04433318c6c76939dc1451600530195281Fa8858";
+const ETRANSFER_ADDRESS = "0x5Ec97C1Af51241c01D4c5b65B364Ad73c50BCc83";
+const TOKEN_ADDRESS = "0x15B1707025A04bB980D175d9854B2A1CE798B2CE";
 function hashEmail(email: string): `0x${string}` {
   return keccak256(encodeAbiParameters(parseAbiParameters("string"), [email]));
 }
@@ -140,6 +140,19 @@ function App() {
       });
     },
   });
+
+  async function handleSendTransfer() {
+    const checkUserPath = ref(db, "users/" + hashEmail(destinationEmail));
+    const snapshot = await get(checkUserPath);
+    if (!snapshot.exists()) {
+      // If user isn't linked, j temporarily add them
+      const newUserPath = ref(db, "users/");
+      const updates: { [key: string]: { email: string; address: string; name: string } } = {};
+      updates[hashEmail(destinationEmail)] = { email: destinationEmail, address: "", name: "" };
+      update(newUserPath, updates);
+    }
+    sendTransfer?.();
+  }
 
   const { config: approveConfig } = usePrepareContractWrite({
     address: TOKEN_ADDRESS,
@@ -367,7 +380,7 @@ function App() {
             <Button onClick={approve} isLoading={isApproveLoading || isApproveWaitingForConf}>
               Approve
             </Button>
-            <Button onClick={sendTransfer} isLoading={isSendTransferLoading || isSendTransferWaitingForConf} colorScheme="teal">
+            <Button onClick={handleSendTransfer} isLoading={isSendTransferLoading || isSendTransferWaitingForConf} colorScheme="teal">
               Send
             </Button>
 
