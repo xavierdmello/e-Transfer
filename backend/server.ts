@@ -4,6 +4,7 @@ import "dotenv/config";
 import * as postmark from "postmark";
 import { ref, set, onValue, onChildAdded, onChildChanged } from "firebase/database";
 import db from "./firebase";
+import { link } from "fs";
 
 const RPC = process.env.RPC!;
 const POSTMARK_KEY = process.env.POSTMARK_KEY!;
@@ -45,7 +46,7 @@ async function main() {
           const accountData = snapshot.val();
           const account = accountData.address;
 
-          if ("account && emailHash") {
+          if (account && emailHash) {
             try {
               const isLinked: boolean = await isAccountLinked(account);
 
@@ -56,6 +57,7 @@ async function main() {
                 console.log(`Account ${accountData.email} is linked. All good. (2/2)`);
               }
             } catch (err) {
+              console.log(err)
               console.log("Error fetching isLinked. Potential RPC rate limit. Just gonna pretend this didn't happen :P");
             }
           } else {
@@ -153,12 +155,15 @@ async function main() {
     SENDER,
     RECIPIENT,
   }
-  contract.on("TransferCancelled", (from, to, amount, party) => {
+  contract.on("TransferCancelled", (from, to, amount, party: BigInt) => {
+    console.log("Debug: transfer has been cancellled.")
     onValue(ref(db, "users/" + from), (fromSnapshot) => {
+      console.log("Value fetched.")
       const fromEmail = fromSnapshot.val().email;
       onValue(ref(db, "users/" + to), (toSnapshot) => {
+        console.log("Second value fetched.")
         const toEmail = toSnapshot.val().email;
-        if (party === Party.SENDER) {
+        if (Number(party) === Party.SENDER) {
           client.sendEmail({
             From: "etransfer@xavierdmello.com",
             To: fromEmail,
@@ -173,7 +178,7 @@ async function main() {
             TextBody: "Hi, The transfer of $" + ethers.formatEther(amount) + " (USD) from " + from + " to you was cancelled by the sender.",
           });
           console.log("Sent transfer cancelled email to " + toEmail + " for " + ethers.formatEther(amount) + "USD.");
-        } else if (party === Party.RECIPIENT) {
+        } else if (Number(party) === Party.RECIPIENT) {
           client.sendEmail({
             From: "etransfer@xavierdmello.com",
             To: fromEmail,
@@ -188,6 +193,9 @@ async function main() {
             TextBody: "Hi, The transfer of $" + ethers.formatEther(amount) + " (USD) from " + from + " to you was cancelled by you.",
           });
           console.log("Sent transfer cancelled email to " + toEmail + " for " + ethers.formatEther(amount) + "USD.");
+        } else {
+          console.log("Error sending transfer cancelled email. Party is not SENDER or RECIPIENT.");
+          console.log(party);
         }
       });
     });

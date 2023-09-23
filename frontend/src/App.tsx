@@ -144,6 +144,7 @@ function App() {
   async function handleSendTransfer() {
     const checkUserPath = ref(db, "users/" + hashEmail(destinationEmail));
     const snapshot = await get(checkUserPath);
+
     if (!snapshot.exists()) {
       // If user isn't linked, j temporarily add them
       const newUserPath = ref(db, "users/");
