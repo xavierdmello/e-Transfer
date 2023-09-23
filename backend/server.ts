@@ -2,25 +2,48 @@ import { ethers } from "ethers";
 import eTransferAbi from "./eTransferAbi";
 import "dotenv/config";
 import * as postmark from "postmark";
-import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set, onValue } from "firebase/database";
+import { ref, set, onValue, onChildAdded } from "firebase/database";
+import db from "./firebase";
 
 const RPC = process.env.RPC!;
 const POSTMARK_KEY = process.env.POSTMARK_KEY!;
+const PRIVATE_KEY = process.env.PRIVATE_KEY!;
 const eTransferAddress = "0x047CbFe0a82cad48b0c672eF73475955d6c7a2f2";
-let client = new postmark.ServerClient(POSTMARK_KEY);
 
-const firebaseConfig = {
-  databaseURL: "https://e-transfer-dev-default-rtdb.firebaseio.com/",
-};
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+let client = new postmark.ServerClient(POSTMARK_KEY);
 
 async function main() {
   const provider = new ethers.WebSocketProvider(RPC);
   const contract = new ethers.Contract(eTransferAddress, eTransferAbi, provider);
+  const signer = new ethers.Wallet(PRIVATE_KEY, provider);
 
   console.log("e-Transfer server started.");
+
+  const newAccountRef = ref(db, "users/");
+  let initialDataLoaded = false;
+  onValue(newAccountRef, () => {
+    initialDataLoaded = true;
+  });
+  onChildAdded(newAccountRef, (snapshot) => {
+    async function linkAccountsFunction() {
+      const emailHash = snapshot.key;
+      const accountData = snapshot.val();
+      const account = accountData.address;
+
+      const eTransferLinker = new ethers.Contract(eTransferAddress, eTransferAbi, signer);
+
+      console.log(
+        "Linking email hash " + emailHash + " to " + account + ". Balance: " + ethers.formatEther(await provider.getBalance(signer.address)),
+        " ETH."
+      );
+      await eTransferLinker.linkAccount(emailHash, account);
+      console.log("Linking done. Balance: ", ethers.formatEther(await provider.getBalance(signer.address)), " ETH.");
+    }
+
+    if (initialDataLoaded == true) {
+      linkAccountsFunction();
+    }
+  });
 
   contract.on("TransferPending", (from, to, amount) => {
     onValue(ref(db, "users/" + to), (snapshot) => {
@@ -71,7 +94,7 @@ async function main() {
               " (USD) and the money has been automatically deposited into your account.",
           });
         });
-        console.log("Sent transfer recieved and deposited automatically email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
+        console.log("Sent transfer received and deposited automatically email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
       }
     });
   });

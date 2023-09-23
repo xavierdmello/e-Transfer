@@ -43,6 +43,7 @@ import {
   Select,
 } from "@chakra-ui/react";
 
+
 const ETRANSFER_ADDRESS = "0x047CbFe0a82cad48b0c672eF73475955d6c7a2f2";
 const TOKEN_ADDRESS = "0x04433318c6c76939dc1451600530195281Fa8858";
 function hashEmail(email: string): `0x${string}` {
@@ -280,18 +281,20 @@ function App() {
     async function runEffect() {
       if (ready && !authenticated) {
         login();
-      } else if (ready && authenticated && user?.wallet) {
-        // make sure wallet is on correct network
-        const targetChainId = 420;
-        const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy")!;
-        const currentChainId: number = parseInt(embeddedWallet.chainId);
+      } else if (ready && authenticated) {
+        if (user?.wallet) {
+          // make sure wallet is on correct network
+          const targetChainId = 420;
+          const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy")!;
+          const currentChainId: number = parseInt(embeddedWallet.chainId);
 
-        if (currentChainId !== targetChainId) {
-          await embeddedWallet.switchChain(targetChainId);
+          if (currentChainId !== targetChainId) {
+            await embeddedWallet.switchChain(targetChainId);
+          }
+        } else {
+          // In case embedded wallet creation bugged out when user first signed up.
+          createWallet();
         }
-      } else {
-        // In case embedded wallet creation bugged out when user first signed up.
-        createWallet();
       }
     }
     runEffect();
