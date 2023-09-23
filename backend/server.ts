@@ -8,7 +8,7 @@ import db from "./firebase";
 const RPC = process.env.RPC!;
 const POSTMARK_KEY = process.env.POSTMARK_KEY!;
 const PRIVATE_KEY = process.env.PRIVATE_KEY!;
-const eTransferAddress = "0x047CbFe0a82cad48b0c672eF73475955d6c7a2f2";
+const eTransferAddress = "0xB2D2f29e572577854306099DFA24B07596eC92a7";
 
 let client = new postmark.ServerClient(POSTMARK_KEY);
 
