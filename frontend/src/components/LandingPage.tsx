@@ -6,7 +6,7 @@ function LandingPage() {
   const { login } = usePrivy();
 
   return (
-    <VStack backgroundColor={"white"} padding={"16px"} height={"100%"} borderRadius={"3xl"} justifyContent={"space-between"} >
+    <VStack backgroundColor={"white"} padding={"16px"} height={"100%"} borderRadius={"3xl"} justifyContent={"space-between"}>
       <Box>
         <Text fontWeight={"bold"} fontSize={"2xl"} mb={"5px"}>
           Interac e-Transfer 💸
@@ -36,6 +36,15 @@ function LandingPage() {
                 Zelle↗.
               </Link>{" "}
               The new standard of user-friendly Web3 UX ✨
+            </Text>
+          </ListItem>
+          <ListItem>
+            <Text fontSize={"xl"} fontWeight={"semibold"}>
+              As easy as{" "}
+              <Link href="https://www.zellepay.com/" isExternal>
+                Zelle↗.
+              </Link>{" "}
+              Sign up now and get $5 for a limited time, on us 🤑
             </Text>
           </ListItem>
         </UnorderedList>
