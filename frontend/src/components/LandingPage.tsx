@@ -5,7 +5,15 @@ function LandingPage() {
   const { login } = usePrivy();
 
   return (
-    <VStack className="disableCaret" backgroundColor={"white"} padding={"16px"} height={"100%"} borderRadius={"3xl"} justifyContent={"space-between"} overflow={"hidden"}>
+    <VStack
+      className="disableCaret"
+      backgroundColor={"white"}
+      padding={"16px"}
+      height={"100%"}
+      borderRadius={"3xl"}
+      justifyContent={"space-between"}
+      overflow={"hidden"}
+    >
       <Box>
         <Text fontWeight={"bold"} fontSize={"2xl"} mb={"5px"}>
           Interac e-Transfer 💸
@@ -27,7 +35,11 @@ function LandingPage() {
           </ListItem>
           <ListItem>
             <Text fontSize={"xl"} fontWeight={"semibold"}>
-              As easy as Zelle. The new standard of friendly Web3 UX ✨
+              As easy as{" "}
+              <Link href="https://www.zellepay.com/" isExternal>
+                Zelle↗.
+              </Link>{" "}
+              The new standard of friendly Web3 UX ✨
             </Text>
           </ListItem>
         </UnorderedList>
@@ -40,13 +52,16 @@ function LandingPage() {
           </Text>
         </Center>
         <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" />
-        <Button onClick={login}>Login</Button>    
+        <Button onClick={login}>Login</Button>
         <Center>
           <Text fontSize={"sm"} color={"gray.400"}>
-            <Link isExternal href="https://github.com/xavierdmello/e-Transfer">
+            <Link isExternal textDecor={"underline"} href="https://github.com/xavierdmello/e-Transfer">
               Github
             </Link>{" "}
-            - © 2023 <Link href="https://xavierdmello.com" isExternal>Xavier D'Mello</Link>
+            - © 2023{" "}
+            <Link href="https://xavierdmello.com" textDecor={"underline"} isExternal>
+              Xavier D'Mello ↗
+            </Link>
           </Text>
         </Center>
       </Flex>
