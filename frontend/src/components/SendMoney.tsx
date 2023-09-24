@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { usePrivyWagmi } from "@privy-io/wagmi-connector";
-import { useNetwork, useSwitchNetwork, useTransaction } from "wagmi";
-import { keccak256, encodeAbiParameters, parseAbiParameters, parseUnits, formatUnits } from "viem";
+import { useBalance, useNetwork, useSwitchNetwork, useTransaction } from "wagmi";
+import { keccak256, encodeAbiParameters, parseAbiParameters, parseUnits, formatUnits, formatEther } from "viem";
 import { useContractRead, usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
 import eTransferAbi from "../abi/etransfer.js";
 import tokenAbi from "../abi/token.js";
@@ -168,6 +168,7 @@ function SendMoney() {
     },
   });
 
+  const { data: ethBalance } = useBalance({ address: activeWallet?.address as `0x${string}`, watch: true });
   const { config: enableAutodepositConfig } = usePrepareContractWrite({
     address: ETRANSFER_ADDRESS,
     abi: eTransferAbi,
@@ -287,7 +288,6 @@ function SendMoney() {
   });
   const [name, setName] = useState<string>("");
   const [contacts, setContacts] = useState<Contact[]>([]);
-  
 
   useEffect(() => {
     return onValue(ref(db, "users/" + hashEmail(user?.email?.address!)), (snapshot) => {
@@ -340,18 +340,37 @@ function SendMoney() {
         <Flex direction={"row"} gap={"20px"} alignItems={"center"}>
           <Select>
             {wallets.map((wallet) => {
-              return (
-                <option key={wallet.address} value={wallet.address}>
-                  {wallet.address}
-                </option>
-              );
+              if (user?.wallet?.address === wallet.address) {
+                return (
+                  <option key={wallet.address} value={wallet.address}>
+                    e-Transfer® wallet
+                  </option>
+                );
+              } else {
+                return (
+                  <option key={wallet.address} value={wallet.address}>
+                    {wallet.address}
+                  </option>
+                );
+              }
             })}
           </Select>
 
-          <Text fontWeight={"regular"} fontSize={"md"}>
-            ${balance ? formatUnits(balance, 18) : "0.00"}
-          </Text>
+          <Flex direction="column" flexShrink={0}>
+            <Text fontWeight={"regular"} fontSize={"md"}>
+              ${balance ? formatUnits(balance, 18) : "0.00"}
+            </Text>
+            <Text fontWeight={"regular"} fontSize={"xs"}>
+              ETH: {ethBalance?.formatted}
+            </Text>
+          </Flex>
         </Flex>
+
+        {user?.wallet?.address == activeWallet?.address && (
+          <Text fontWeight={"regular"} textColor={"gray.500"} fontSize={"xs"}>
+            Address: {activeWallet?.address}
+          </Text>
+        )}
 
         <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" my="8px" />
 
