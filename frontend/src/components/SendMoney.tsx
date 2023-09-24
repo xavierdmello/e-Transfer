@@ -46,6 +46,7 @@ import {
   Flex,
   Text,
   Spacer,
+  Breadcrumb,
 } from "@chakra-ui/react";
 import { getRedirectResult } from "firebase/auth";
 import { isCastable } from "../helperFunctions.ts";
@@ -71,6 +72,7 @@ function SendMoney() {
   const toast = useToast();
   const { user } = usePrivy();
   const { wallet: activeWallet, setActiveWallet } = usePrivyWagmi();
+//   const { isOpen: isAddContactOpen, onOpen: onAddContactOpen, onClose: onAddContactClose } = useDisclosure();
 
   const { data: allowance, isLoading: isAllowanceLoading } = useContractRead({
     address: TOKEN_ADDRESS,
@@ -278,8 +280,11 @@ function SendMoney() {
   });
 
   const [depositModalChoice, setDepositModalChoice] = useState<string>();
-
+//   const [addContactModalEmail, setAddContactModalEmail] = useState<string>("");
+//   const [addContactModalName, setAddContactModalName] = useState<string>("");
   const allUserAccounts: string[] = [];
+
+
 
   user?.linkedAccounts.forEach((account) => {
     if (account.type === "wallet") {
@@ -287,17 +292,30 @@ function SendMoney() {
     }
   });
   const [name, setName] = useState<string>("");
-  const [contacts, setContacts] = useState<Contact[]>([]);
+//   const [contacts, setContacts] = useState<Contact[]>([]);
 
   useEffect(() => {
     return onValue(ref(db, "users/" + hashEmail(user?.email?.address!)), (snapshot) => {
       const data = snapshot.val();
       const name: string = data.name;
-      const contacts: Contact[] = data.contacts;
+
       setName(name);
-      setContacts(contacts && contacts.length > 0 ? contacts : []);
     });
   }, []);
+
+//   useEffect(() => {
+//     return onValue(ref(db, "users/" + hashEmail(user?.email?.address!) + "/contacts/"), (snapshot) => {
+//       const data = snapshot.val();
+
+//       const contacts: Contact = data;
+//       console.log(data);
+//       console.log("contact:");
+//       console.log(contacts);
+//       console.log("users/" + hashEmail(user?.email?.address!) + "/contacts/");
+
+//       //   setContacts(contacts && contacts.length > 0 ? contacts : []);
+//     });
+//   }, []);
 
   const [isSendTransferDisabled, setIsSendTransferDisabled] = useState<boolean>(false);
   useEffect(() => {
@@ -309,9 +327,49 @@ function SendMoney() {
   }, [allowance, sendAmount]);
 
   const { wallets } = useWallets();
-  console.log(isCastable(sendAmount));
+
   return (
     <Flex direction={"column"}>
+      {/* <Modal isOpen={isAddContactOpen} onClose={onAddContactClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add contact</ModalHeader>
+          <ModalCloseButton />
+
+          <ModalBody>
+            <Text fontWeight={"regular"} fontSize={"sm"} mb={"8px"}>
+              Name
+            </Text>
+            <Input
+              value={addContactModalName}
+              onChange={(e) => setAddContactModalName(e.target.value)}
+              placeholder="John Doe"
+              size={"sm"}
+              width={"100%"}
+              height={"50px"}
+              mb={"16px"}
+            />
+
+            <Text fontWeight={"regular"} fontSize={"sm"} mb={"8px"}>
+              Email
+            </Text>
+            <Input
+              value={addContactModalEmail}
+              onChange={(e) => setAddContactModalEmail(e.target.value)}
+              placeholder="john.doe@example.com"
+              size={"sm"}
+              width={"100%"}
+              height={"50px"}
+            />
+          </ModalBody>
+
+          <ModalFooter>
+            <Button backgroundColor={"brand"} onClick={onAddContactClose}>
+              Add Contact
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal> */}
       <Flex direction={"column"} px={"16px"} py={"8px"}>
         <Text fontWeight={"regular"} fontSize={"sm"}>
           Logged into e-Transfer®
@@ -378,11 +436,11 @@ function SendMoney() {
           <Text fontWeight={"regular"} fontSize={"sm"}>
             To
           </Text>
-          <Button variant={"link"} fontWeight={"regular"} fontSize={"sm"}>
+          {/* <Button variant={"link"} onClick={onAddContactOpen} fontWeight={"regular"} fontSize={"sm"}>
             + Add Contact
-          </Button>
+          </Button> */}
         </Flex>
-
+{/* 
         <Select>
           {contacts.map((contact) => {
             return (
@@ -391,7 +449,7 @@ function SendMoney() {
               </option>
             );
           })}
-        </Select>
+        </Select> */}
 
         <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" my="8px" />
 

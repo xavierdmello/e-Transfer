@@ -52,10 +52,7 @@ function App() {
   const { wallets } = useWallets();
 
   useEffect(() => {
-    console.log("changed!")
-    console.log(user)
-    console.log(ready)
-    console.log(authenticated)
+
     async function runEffect() {
       if (ready && authenticated) {
         if (user?.wallet) {
