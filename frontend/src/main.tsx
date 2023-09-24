@@ -1,7 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
-
+import "@fontsource/raleway/300.css";
+import "@fontsource/open-sans/400.css";
+import "@fontsource/open-sans/600.css";
+import "@fontsource/open-sans/300.css";
+import "@fontsource/roboto/700.css";
 import { extendTheme } from "@chakra-ui/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ComponentStyleConfig } from "@chakra-ui/react";
@@ -23,7 +27,11 @@ const breakpoints = {
   sm: "48em",
 };
 
-const theme = extendTheme({ colors: { brand: "#ebab1f" }, breakpoints: breakpoints });
+const theme = extendTheme({
+  colors: { brand: "#ebab1f" },
+  fonts: { heading: `'Open Sans' sans-serif`, body: `'Open Sans', sans-serif` },
+  breakpoints: breakpoints,
+});
 
 // Replace the chains and providers with the ones used by your app.
 // https://wagmi.sh/react/providers/configuring-chains

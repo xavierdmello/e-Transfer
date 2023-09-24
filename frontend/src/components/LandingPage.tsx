@@ -29,21 +29,20 @@ import {
   ModalCloseButton,
   useDisclosure,
   Select,
-  Box
+  Box,
+  Flex,
 } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
 
 function LandingPage() {
-    return (
-      <>
-<Box backgroundColor={"red.500"}>
+  return (
 
-</Box>
-      
-  
-      </>
-    );
+      <Box backgroundColor={"white"} height={"100%"} borderRadius={"3xl"} padding={"20px"}>
+        dasdsdsads
+      </Box>
+
+  );
 }
 
 export default LandingPage;

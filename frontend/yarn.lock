@@ -454,6 +454,20 @@
   dependencies:
     "@chakra-ui/shared-utils" "2.0.5"
 
+"@chakra-ui/icon@3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/icon/-/icon-3.2.0.tgz#92b9454aa0d561b4994bcd6a1b3bb1fdd5c67bef"
+  integrity sha512-xxjGLvlX2Ys4H0iHrI16t74rG9EBcpFvJ3Y3B7KMQTrnW34Kf7Da/UC8J67Gtx85mTHW020ml85SVPKORWNNKQ==
+  dependencies:
+    "@chakra-ui/shared-utils" "2.0.5"
+
+"@chakra-ui/icons@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/icons/-/icons-2.1.1.tgz#58ff0f9e703f2f4f89debd600ce4e438f43f9c9a"
+  integrity sha512-3p30hdo4LlRZTT5CwoAJq3G9fHI0wDc0pBaMHj4SUn0yomO+RcDRlzhdXqdr5cVnzax44sqXJVnf3oQG0eI+4g==
+  dependencies:
+    "@chakra-ui/icon" "3.2.0"
+
 "@chakra-ui/image@2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@chakra-ui/image/-/image-2.1.0.tgz#6c205f1ca148e3bf58345b0b5d4eb3d959eb9f87"
@@ -1963,6 +1977,21 @@
   version "0.10.2"
   resolved "https://registry.yarnpkg.com/@firebase/webchannel-wrapper/-/webchannel-wrapper-0.10.2.tgz#6d7929bf6f5f049418781c2cd9ff3fb0463eac51"
   integrity sha512-xDxhD9++451HuCv3xKBEdSYaArX9NcokODXZYH/MxGw1XFFOz7OKkTRItZ5wf6npBN/inwp8dUZCP7SpAg46yQ==
+
+"@fontsource/open-sans@^5.0.12":
+  version "5.0.12"
+  resolved "https://registry.yarnpkg.com/@fontsource/open-sans/-/open-sans-5.0.12.tgz#4aa9edc5fa9851cd8a578349e94e5d1e4fd486b3"
+  integrity sha512-Ptri5McmTGEJkQ5nvGQeJX8YdGbZpOT6V03By1pISIPZygO/ps4bQIvwPO+X/WtBY+2C1xKeyqx7LX+3fxlo2A==
+
+"@fontsource/raleway@^5.0.8":
+  version "5.0.8"
+  resolved "https://registry.yarnpkg.com/@fontsource/raleway/-/raleway-5.0.8.tgz#378f5f62d8bbd0846c2090cc595b02805c6d4548"
+  integrity sha512-b6ZTFQ7sZSUSm/ny0SNXdafcu+p6jpIzpEc1Woxym4qkuAp3kONZJs9r+HYPfMm/fDW1VBIzZxVOLhglYzdw6Q==
+
+"@fontsource/roboto@^5.0.8":
+  version "5.0.8"
+  resolved "https://registry.yarnpkg.com/@fontsource/roboto/-/roboto-5.0.8.tgz#613b477a56f21b5705db1a67e995c033ef317f76"
+  integrity sha512-XxPltXs5R31D6UZeLIV1td3wTXU3jzd3f2DLsXI8tytMGBkIsGcc9sIyiupRtA8y73HAhuSCeweOoBqf6DbWCA==
 
 "@grpc/grpc-js@~1.8.17":
   version "1.8.21"

@@ -47,15 +47,15 @@ import {
 
 function App() {
   const { login, authenticated, user, ready, logout, createWallet } = usePrivy();
-  const [menu, setMenu] = useState("welcome");
+  const [menu, setMenu] = useState("landing");
   const ref = React.useRef(null);
-  
+
   return (
     <>
       <Center>
         <Container
-          w={["95%", "75%"]}
-          maxW={"800px"}
+          w={["95%", "60%"]}
+          maxW={"500px"}
           shadow={"sm"}
           mt="1vh"
           mb="1vh"
@@ -64,29 +64,11 @@ function App() {
           borderRadius={"3xl"}
           height={"98vh"}
           padding={"0px"}
-          position={"relative"}
+          backgroundColor={"brand"}
+          overflow={"hidden"}
         >
-          {/* Main Content */}
-          
-          <Box zIndex={"100"} height={"100%"} width={"100%"} borderRadius={"3xl"}display={"block"}>
-            <Header />
-            <LandingPage/>
-            <h1>dasds</h1>
-          </Box>
-
-          {/* Fancy bg */}
-          <Box
-            m="0"
-            zIndex={"-100"}
-            top={0}
-            left={0}
-            borderTopRadius={"3xl"}
-            p="0"
-            height="20%"
-            position={"absolute"}
-            backgroundColor={"brand"}
-            width={"100%"}
-          ></Box>
+          <Header />
+          {menu === "landing" ? <LandingPage /> : <Wallet />}
         </Container>
       </Center>
     </>
