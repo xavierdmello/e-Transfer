@@ -57,7 +57,7 @@ async function main() {
                 console.log(`Account ${accountData.email} is linked. All good. (2/2)`);
               }
             } catch (err) {
-              console.log(err)
+              console.log(err);
               console.log("Error fetching isLinked. Potential RPC rate limit. Just gonna pretend this didn't happen :P");
             }
           } else {
@@ -99,53 +99,64 @@ async function main() {
   contract.on("TransferPending", (from, to, amount) => {
     onValue(ref(db, "users/" + to), (snapshot) => {
       const toEmail = snapshot.val().email;
-      client.sendEmail({
-        From: "etransfer@xavierdmello.com",
-        To: toEmail,
-        Subject: "INTERAC e-Transfer: " + from + " sent you money.",
-        TextBody: "Hi " + toEmail + ", " + from + " sent you $" + ethers.formatEther(amount) + " (USD).",
+      onValue(ref(db, "users/" + from), (snapshot) => {
+        const fromName = snapshot.val().name;
+
+        client.sendEmail({
+          From: "etransfer@xavierdmello.com",
+          To: toEmail,
+          Subject: "INTERAC e-Transfer: " + fromName + " sent you money.",
+          TextBody: "Hi " + toEmail + ", " + fromName + " sent you $" + ethers.formatEther(amount) + " (USD).",
+        });
+        console.log("Sent pending transfer email to " + toEmail + " for " + ethers.formatEther(amount) + "USD.");
       });
-      console.log("Sent pending transfer email to " + toEmail + " for " + ethers.formatEther(amount) + "USD.");
     });
   });
 
   contract.on("TransferSent", (from, to, amount, autodeposit) => {
     onValue(ref(db, "users/" + from), (snapshot) => {
       const fromEmail = snapshot.val().email;
-      if (autodeposit === false) {
-        client.sendEmail({
-          From: "etransfer@xavierdmello.com",
-          To: fromEmail,
-          Subject: "INTERAC e-Transfer: " + to + " accepted your money transfer.",
-          TextBody: "Hi " + fromEmail + ", The money transfer you sent to " + to + " for the amount of $" + ethers.formatEther(amount) + " (USD) was accepted.",
-        });
-        console.log("Sent transfer accepted email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
-      } else {
-        client.sendEmail({
-          From: "etransfer@xavierdmello.com",
-          To: fromEmail,
-          Subject: "INTERAC e-Transfer: Your money transfer to " + to + " was deposited.",
-          TextBody: "Hi " + fromEmail + ", The $" + ethers.formatEther(amount) + " (USD) you sent to " + to + " has been sucessfully deposited.",
-        });
-        console.log("Sent transfer deposited automatically email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
+      const fromName = snapshot.val().name;
 
+      if (autodeposit === false) {
+        onValue(ref(db, "users/" + to), (snapshot) => {
+          const toEmail = snapshot.val().email;
+
+          client.sendEmail({
+            From: "etransfer@xavierdmello.com",
+            To: fromEmail,
+            Subject: "INTERAC e-Transfer: " + toEmail + " accepted your money transfer.",
+            TextBody:
+              "Hi " + fromName + ", The money transfer you sent to " + toEmail + " for the amount of $" + ethers.formatEther(amount) + " (USD) was accepted.",
+          });
+          console.log("Sent transfer accepted email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
+        });
+      } else {
         onValue(ref(db, "users/" + to), (snapshot) => {
           const toEmail = snapshot.val().email;
           client.sendEmail({
             From: "etransfer@xavierdmello.com",
+            To: fromEmail,
+            Subject: "INTERAC e-Transfer: Your money transfer to " + toEmail + " was deposited.",
+            TextBody: "Hi " + fromName + ", The $" + ethers.formatEther(amount) + " (USD) you sent to " + toEmail + " has been sucessfully deposited.",
+          });
+          console.log("Sent transfer deposited automatically email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
+
+          client.sendEmail({
+            From: "etransfer@xavierdmello.com",
             To: toEmail,
-            Subject: "INTERAC e-Transfer: A money transfer from " + from + " has been automatically deposited.",
+            Subject: "INTERAC e-Transfer: A money transfer from " + fromName + " has been automatically deposited.",
             TextBody:
               "Hi " +
               toEmail +
               "," +
-              from +
+              fromName +
               " has sent you $" +
               ethers.formatEther(amount) +
               " (USD) and the money has been automatically deposited into your account.",
           });
+          console.log("Sent transfer received and deposited automatically email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
         });
-        console.log("Sent transfer received and deposited automatically email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
       }
     });
   });
@@ -156,12 +167,12 @@ async function main() {
     RECIPIENT,
   }
   contract.on("TransferCancelled", (from, to, amount, party: BigInt) => {
-    console.log("Debug: transfer has been cancellled.")
+    console.log("Debug: transfer has been cancellled.");
     onValue(ref(db, "users/" + from), (fromSnapshot) => {
-      console.log("Value fetched.")
+      console.log("Value fetched.");
       const fromEmail = fromSnapshot.val().email;
       onValue(ref(db, "users/" + to), (toSnapshot) => {
-        console.log("Second value fetched.")
+        console.log("Second value fetched.");
         const toEmail = toSnapshot.val().email;
         if (Number(party) === Party.SENDER) {
           client.sendEmail({
