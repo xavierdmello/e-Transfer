@@ -46,7 +46,7 @@ function LandingPage() {
             <Link isExternal href="https://github.com/xavierdmello/e-Transfer">
               Github
             </Link>{" "}
-            - © 2023 Xavier D'Mello
+            - © 2023 <Link href="https://xavierdmello.com" isExternal>Xavier D'Mello</Link>
           </Text>
         </Center>
       </Flex>
