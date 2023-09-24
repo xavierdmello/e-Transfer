@@ -439,8 +439,12 @@ function SendMoney() {
           {/* <Button variant={"link"} onClick={onAddContactOpen} fontWeight={"regular"} fontSize={"sm"}>
             + Add Contact
           </Button> */}
+
+          {/* input email */}
         </Flex>
-{/* 
+        <Input value={destinationEmail} placeholder="Recipient's email" onChange={(e) => setDestinationEmail(e.target.value)}></Input>
+
+        {/* 
         <Select>
           {contacts.map((contact) => {
             return (
