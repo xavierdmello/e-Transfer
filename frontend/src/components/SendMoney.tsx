@@ -228,31 +228,7 @@ function SendMoney() {
     },
   });
 
-  const {
-    write: receiveTransfer,
-    data: receiveTransferData,
-    isLoading: isReceiveTransferLoading,
-  } = useContractWrite({ address: ETRANSFER_ADDRESS, abi: eTransferAbi, functionName: "receiveTransfer" });
-  const { isLoading: isReceiveTransferWaitingForConf } = useWaitForTransaction({
-    hash: receiveTransferData?.hash,
-    onSuccess(data) {
-      toast({
-        title: "Transaction success.",
-        status: "success",
-        isClosable: true,
-        duration: 6000,
-      });
-    },
-    onError(error) {
-      toast({
-        title: "Transaction error.",
-        description: error.message,
-        status: "error",
-        isClosable: true,
-        duration: 6000,
-      });
-    },
-  });
+ 
 
   const {
     write: cancelTransfer,

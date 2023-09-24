@@ -68,12 +68,38 @@ type Contact = {
   name: string;
 };
 function ReceiveMoney() {
+  const toast = useToast();
   const { wallet: activeWallet, setActiveWallet } = usePrivyWagmi();
   const { data: pendingTransfers, isLoading: arePendingTransfersLoading } = useContractRead({
     address: ETRANSFER_ADDRESS,
     abi: eTransferAbi,
     functionName: "getPendingTransfers",
     watch: true,
+  });
+  const {
+    write: receiveTransfer,
+    data: receiveTransferData,
+    isLoading: isReceiveTransferLoading,
+  } = useContractWrite({ address: ETRANSFER_ADDRESS, abi: eTransferAbi, functionName: "receiveTransfer" });
+  const { isLoading: isReceiveTransferWaitingForConf } = useWaitForTransaction({
+    hash: receiveTransferData?.hash,
+    onSuccess(data) {
+      toast({
+        title: "Transaction success.",
+        status: "success",
+        isClosable: true,
+        duration: 6000,
+      });
+    },
+    onError(error) {
+      toast({
+        title: "Transaction error.",
+        description: error.message,
+        status: "error",
+        isClosable: true,
+        duration: 6000,
+      });
+    },
   });
   const { data: linkedEmail, isLoading: isLinkedEmailLoading } = useContractRead({
     address: ETRANSFER_ADDRESS,
@@ -106,7 +132,13 @@ function ReceiveMoney() {
               <Text>`${formatEther(transfer.amount)}</Text>
             </CardBody>
             <CardFooter>
-              <Button bgColor={"brand"}>Deposit </Button>
+              <Button
+                isLoading={isReceiveTransferWaitingForConf || isReceiveTransferLoading}
+                bgColor={"brand"}
+                onClick={() => receiveTransfer({ args: [transfer.index, activeWallet?.address as `0x${string}`] })}
+              >
+                Deposit
+              </Button>
             </CardFooter>
           </Card>
         );
