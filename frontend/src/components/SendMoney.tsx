@@ -9,7 +9,7 @@ import tokenAbi from "../abi/token.js";
 import { nanoid } from "nanoid";
 import db from "../firebase.ts";
 import { ref, update, set, onValue, get } from "firebase/database";
-
+import { hashEmail } from "../helperFunctions.ts";
 import {
   Button,
   Input,
@@ -21,6 +21,7 @@ import {
   Container,
   Center,
   UnorderedList,
+  Divider,
   Spinner,
   ListItem,
   NumberInput,
@@ -44,14 +45,12 @@ import {
   Box,
   Flex,
   Text,
+  Spacer,
 } from "@chakra-ui/react";
 import { getRedirectResult } from "firebase/auth";
 
 const ETRANSFER_ADDRESS = "0xB2D2f29e572577854306099DFA24B07596eC92a7";
 const TOKEN_ADDRESS = "0x62e6940856c42bD23C0c895824921678A37A62aE";
-function hashEmail(email: string): `0x${string}` {
-  return keccak256(encodeAbiParameters(parseAbiParameters("string"), [email]));
-}
 
 type TransferWithId = {
   from: `0x${string}`;
@@ -63,13 +62,9 @@ type TransferWithId = {
 };
 function SendMoney() {
   const toast = useToast();
-
-  const { isOpen: isDepositModalOpen, onOpen: openDepositModal, onClose: closeDepositModal } = useDisclosure();
-  const { login, authenticated, user, ready, logout, createWallet } = usePrivy();
-  const { wallets } = useWallets();
+  const { user } = usePrivy();
   const { wallet: activeWallet, setActiveWallet } = usePrivyWagmi();
-  const { chain } = useNetwork();
-  const { chains, pendingChainId, isLoading, switchNetwork } = useSwitchNetwork({ throwForSwitchChainNotSupported: true });
+
   const { data: allowance, isLoading: isAllowanceLoading } = useContractRead({
     address: TOKEN_ADDRESS,
     abi: tokenAbi,
@@ -84,12 +79,6 @@ function SendMoney() {
     args: [activeWallet?.address as `0x${string}`],
     enabled: typeof activeWallet !== "undefined",
   });
-  const { data: pendingTransfers, isLoading: arePendingTransfersLoading } = useContractRead({
-    address: ETRANSFER_ADDRESS,
-    abi: eTransferAbi,
-    functionName: "getPendingTransfers",
-    watch: true,
-  });
   const { data: balance, isLoading: isBalanceLoading } = useContractRead({
     address: TOKEN_ADDRESS,
     abi: tokenAbi,
@@ -97,19 +86,6 @@ function SendMoney() {
     args: [activeWallet?.address as `0x${string}`],
     watch: true,
   });
-
-  const receivedTransfers: TransferWithId[] = [];
-  const myPendingTransfers: TransferWithId[] = [];
-  if (pendingTransfers) {
-    pendingTransfers.forEach((transfer, index) => {
-      if (transfer.from === linkedEmail) {
-        myPendingTransfers.push({ id: nanoid(), index: BigInt(index), ...transfer });
-      }
-      if (transfer.to === linkedEmail) {
-        receivedTransfers.push({ id: nanoid(), index: BigInt(index), ...transfer });
-      }
-    });
-  }
 
   const [destinationEmail, setDestinationEmail] = useState<string>("");
   const [sendAmount, setSendAmount] = useState<string>("");
@@ -189,7 +165,7 @@ function SendMoney() {
     address: ETRANSFER_ADDRESS,
     abi: eTransferAbi,
     functionName: "setAutodepositAddress",
-    args: [user && user.wallet ? (user.wallet.address as `0x${string}`) : "0x"],
+    args: [user?.wallet?.address as `0x${string}`],
   });
   const { write: enableAutodeposit, data: enableAutodepositData, isLoading: isEnableAutodepositLoading } = useContractWrite(enableAutodepositConfig);
   const { isLoading: isEnableAutodepositWaitingForConf } = useWaitForTransaction({
@@ -293,21 +269,48 @@ function SendMoney() {
     },
   });
 
-
-
   const [depositModalChoice, setDepositModalChoice] = useState<string>();
 
   const allUserAccounts: string[] = [];
 
-  if (user) {
-    user.linkedAccounts.forEach((account) => {
-      if (account.type === "wallet") {
-        allUserAccounts.push(account.address);
-      }
-    });
-  }
+  user?.linkedAccounts.forEach((account) => {
+    if (account.type === "wallet") {
+      allUserAccounts.push(account.address);
+    }
+  });
+  const [name, setName] = useState<string>("");
 
-  return <Box className="disableCaret">hi</Box>;
+  useEffect(() => {
+    return onValue(ref(db, "users/" + hashEmail(user?.email?.address!)), (snapshot) => {
+      const data = snapshot.val();
+      setName(data.name);
+    });
+  }, []);
+
+  return (
+    <Flex className="disableCaret" direction={"column"}>
+      <Flex direction={"column"} px={"16px"} py={"8px"}>
+        <Text fontWeight={"regular"} fontSize={"sm"}>
+          Logged into e-Transfer®
+        </Text>
+      </Flex>
+      <Flex direction={"column"} padding={"16px"} backgroundColor={"gray.50"}>
+        <Text fontWeight={"medium"} fontSize={"lg"}>
+          {name.toUpperCase()}
+        </Text>
+
+        <Text fontWeight={"normal"} fontSize={"md"}>
+          {user?.email?.address!}
+        </Text>
+      </Flex>
+
+      <Flex padding={"16px"}>
+        <Text fontWeight={"regular"} fontSize={"sm"}>
+          From Account
+        </Text>
+      </Flex>
+    </Flex>
+  );
 }
 
 export default SendMoney;

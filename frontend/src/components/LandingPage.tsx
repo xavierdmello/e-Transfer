@@ -5,7 +5,7 @@ function LandingPage() {
   const { login } = usePrivy();
 
   return (
-    <VStack backgroundColor={"white"} padding={"16px"} height={"100%"} borderRadius={"3xl"} justifyContent={"space-between"} overflow={"hidden"}>
+    <VStack className="disableCaret" backgroundColor={"white"} padding={"16px"} height={"100%"} borderRadius={"3xl"} justifyContent={"space-between"} overflow={"hidden"}>
       <Box>
         <Text fontWeight={"bold"} fontSize={"2xl"} mb={"5px"}>
           Interac e-Transfer 💸
