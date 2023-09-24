@@ -3,7 +3,7 @@ import { useState } from "react";
 import "../styles/wallet.css";
 
 import SendMoney from "./SendMoney.tsx";
-import History from "./History.tsx";
+import ReceiveMoney from "./ReceiveMoney.tsx";
 
 import { Button, Box, Flex, Spacer } from "@chakra-ui/react";
 
@@ -23,20 +23,20 @@ function Wallet({ menu, setMenu }: { menu: string; setMenu: (arg0: string) => vo
           Send Money
         </Button>
         <Button
-          onClick={() => setMenu("history")}
+          onClick={() => setMenu("receiveMoney")}
           width={"50%"}
           height={"50px"}
           borderRadius={"2xl"}
           borderBottomEndRadius={"0px"}
-          backgroundColor={`${menu === "history" ? "white" : "gray.100"}`}
-          _hover={{ backgroundColor: `${menu === "history" ? "white" : "gray.100"}` }}
+          backgroundColor={`${menu === "receiveMoney" ? "white" : "gray.100"}`}
+          _hover={{ backgroundColor: `${menu === "receiveMoney" ? "white" : "gray.100"}` }}
         >
-          History
+          Receive Money
         </Button>
       </Flex>
       <Spacer />
       {menu === "sendMoney" && <SendMoney />}
-      {menu === "history" && <History />}
+      {menu === "receiveMoney" && <ReceiveMoney />}
     </Box>
   );
 }

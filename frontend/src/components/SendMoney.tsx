@@ -426,7 +426,7 @@ function SendMoney() {
 
         {user?.wallet?.address == activeWallet?.address && (
           <Text fontWeight={"regular"} textColor={"gray.500"} fontSize={"xs"}>
-            Address: {activeWallet?.address}
+            Crypto Address: {activeWallet?.address}
           </Text>
         )}
 

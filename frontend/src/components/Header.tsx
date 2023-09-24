@@ -48,7 +48,7 @@ function Header({ setMenu, menu }: { setMenu: (arg0: string) => void; menu: stri
   const { logout, authenticated, ready, user } = usePrivy();
 
   async function handleBack() {
-    if (menu === "sendMoney" || menu === "history") {
+    if (menu === "sendMoney" || menu === "receiveMoney") {
       await logout();
     }
   }
