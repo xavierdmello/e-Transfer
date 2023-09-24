@@ -341,7 +341,7 @@ function SendMoney() {
     });
   }
 
-  return <Box>hi</Box>;
+  return <Box className="disableCaret">hi</Box>;
 }
 
 export default SendMoney;

@@ -38,7 +38,7 @@ import { useEffect, useState } from "react";
 
 function LandingPage() {
   return (
-    <Box backgroundColor={"white"} height={"100%"} borderRadius={"3xl"} overflow={"hidden"}>
+    <Box  backgroundColor={"white"} height={"100%"} borderRadius={"3xl"} overflow={"hidden"}>
       "ballaa"
     </Box>
   );

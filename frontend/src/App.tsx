@@ -51,27 +51,29 @@ function App() {
   const ref = React.useRef(null);
 
   return (
-    <>
+    <Box backgroundColor={["brand", "#13482e"]}>
       <Center>
         <Container
-          w={["95%", "60%"]}
+          w={["100%", "60%"]}
           maxW={"500px"}
           shadow={"sm"}
-          mt="1vh"
-          mb="1vh"
-          border={"1px solid"}
-          borderColor={"gray.200"}
-          borderRadius={"3xl"}
-          height={"98vh"}
+          mt={["0", "1vh"]}
+          mb={["0", "1vh"]}
+          border={"5px solid"}
+          borderColor={"brand"}
+          borderRadius={["0", "3xl"]}
+          height={["100vh", "98vh"]}
+          borderBottomRadius={["3xl", "0xl"]}
           padding={"0px"}
           backgroundColor={"brand"}
           overflow={"hidden"}
         >
-          <Header />
+          <Header setMenu={setMenu} menu={menu} />
+
           {menu === "landing" ? <LandingPage /> : <Wallet />}
         </Container>
       </Center>
-    </>
+    </Box>
   );
 }
 

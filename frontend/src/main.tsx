@@ -15,7 +15,7 @@ import { PrivyWagmiConnector } from "@privy-io/wagmi-connector";
 // https://wagmi.sh/react/chains
 import { optimismGoerli } from "@wagmi/chains";
 import { configureChains } from "wagmi";
-
+import "./styles/index.css"
 // You may replace this with your preferred providers
 // https://wagmi.sh/react/providers/configuring-chains#multiple-providers
 import { jsonRpcProvider } from "@wagmi/core/providers/jsonRpc";
