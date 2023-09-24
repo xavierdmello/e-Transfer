@@ -285,7 +285,7 @@ function SendMoney() {
     }
   });
   const [name, setName] = useState<string>("");
-  const [contacts, setContacts] = useState<Contact[]>([{ name: "hi", email: "hi" }]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
 
   useEffect(() => {
     return onValue(ref(db, "users/" + hashEmail(user?.email?.address!)), (snapshot) => {
@@ -293,7 +293,7 @@ function SendMoney() {
       const name: string = data.name;
       const contacts: Contact[] = data.contacts;
       setName(name);
-      setContacts(contacts);
+      setContacts(contacts && contacts.length > 0 ? contacts : []);
     });
   }, []);
 
@@ -317,9 +317,14 @@ function SendMoney() {
       </Flex>
 
       <Flex direction={"column"} padding={"16px"} gap="8px">
-        <Text fontWeight={"regular"} fontSize={"sm"}>
-          From Account
-        </Text>
+        <Flex direction={"row"} justifyContent={"space-between"}>
+          <Text fontWeight={"regular"} fontSize={"sm"}>
+            From Account
+          </Text>
+          <Button variant={"link"} fontWeight={"regular"} fontSize={"sm"}>
+            + Link Account
+          </Button>
+        </Flex>
 
         <Flex direction={"row"} gap={"20px"} alignItems={"center"}>
           <Select>
@@ -339,21 +344,48 @@ function SendMoney() {
 
         <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" my="8px" />
 
-        <Text fontWeight={"regular"} fontSize={"sm"}>
-          To
-        </Text>
+        <Flex direction={"row"} justifyContent={"space-between"}>
+          <Text fontWeight={"regular"} fontSize={"sm"}>
+            To
+          </Text>
+          <Button variant={"link"} fontWeight={"regular"} fontSize={"sm"}>
+            + Add Contact
+          </Button>
+        </Flex>
 
-        {(contacts  && contacts.length > 0) && (
-          <Select>
-            {contacts.map((contact) => {
-              return (
-                <option key={contact.email} value={contact.email}>
-                  {contact.name} \({contact.email}\)
-                </option>
-              );
-            })}
-          </Select>
-        )}
+        <Select>
+          {contacts.map((contact) => {
+            return (
+              <option key={contact.email} value={contact.email}>
+                {contact.name} \({contact.email}\)
+              </option>
+            );
+          })}
+        </Select>
+
+        <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" my="8px" />
+
+        <Flex direction={"row"} justifyContent={"space-between"}>
+          <Flex direction={"column"}>
+            <Text fontWeight={"regular"} fontSize={"sm"}>
+              Amount
+            </Text>
+            <Button variant={"link"} fontWeight={"regular"} fontSize={"xs"}>
+              + Approve/Mint USDC
+            </Button>
+          </Flex>
+
+          <Flex direction={"row"} alignItems={"center"}>
+            <Text fontWeight={"regular"} fontSize={"xl"} mr={"5px"}>
+              $
+            </Text>
+            <NumberInput size={"sm"} width={"150px"}>
+              <NumberInputField />
+            </NumberInput>
+          </Flex>
+        </Flex>
+
+        <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" my="8px" />
       </Flex>
     </Flex>
   );
