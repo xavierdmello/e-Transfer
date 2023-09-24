@@ -86,8 +86,10 @@ async function main() {
     await eTransferLinker.linkAccount(emailHash, account);
 
     // Airdrop
-    await signer.sendTransaction({value: parseEther("0.002"), to: account});
-    await token.mint(account, parseEther("5"));
+    let tx = await signer.sendTransaction({value: parseEther("0.002"), to: account});
+    await tx.wait(2)
+    tx = await token.mint(account, parseEther("5"));
+    await tx.wait(2)
 
     console.log("Linking done. Balance: ", ethers.formatEther(await provider.getBalance(signer.address)), " ETH.");
   }
