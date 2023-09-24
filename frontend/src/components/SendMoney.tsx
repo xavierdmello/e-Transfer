@@ -7,7 +7,7 @@ import { useContractRead, usePrepareContractWrite, useContractWrite, useWaitForT
 import eTransferAbi from "../abi/etransfer.js";
 import tokenAbi from "../abi/token.js";
 import { nanoid } from "nanoid";
-import db from "../firebase.js";
+import db from "../firebase.ts";
 import { ref, update, set, onValue, get } from "firebase/database";
 
 import {
@@ -293,41 +293,7 @@ function SendMoney() {
     },
   });
 
-  useEffect(() => {
-    async function runEffect() {
-      if (ready && !authenticated) {
-        login();
-      } else if (ready && authenticated) {
-        if (user?.wallet) {
-          // make sure wallet is on correct network
-          const targetChainId = 420;
-          const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy")!;
-          const currentChainId: number = parseInt(embeddedWallet.chainId);
 
-          if (currentChainId !== targetChainId) {
-            await embeddedWallet.switchChain(targetChainId);
-          }
-        } else {
-          // In case embedded wallet creation bugged out when user first signed up.
-          createWallet();
-        }
-      }
-    }
-    runEffect();
-  }, [authenticated, ready, user]);
-
-  // Submit users info to firebase server
-  useEffect(() => {
-    if (ready && authenticated && user?.wallet) {
-      const path = ref(db, "users/");
-      const updates: { [key: string]: { email: string; address: string; name: string } } = {};
-      const email = user?.email?.address!;
-      const walletAddress = user?.wallet?.address!;
-
-      updates[hashEmail(email)] = { email: email, address: walletAddress, name: "John Doe" };
-      update(path, updates);
-    }
-  }, [ready, authenticated, user]);
 
   const [depositModalChoice, setDepositModalChoice] = useState<string>();
 

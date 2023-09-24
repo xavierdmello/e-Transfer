@@ -1,70 +1,33 @@
-import {
-  Button,
-  Input,
-  Heading,
-  InputGroup,
-  useToast,
-  InputLeftElement,
-  InputRightElement,
-  Container,
-  Center,
-  UnorderedList,
-  Spinner,
-  ListItem,
-  NumberInput,
-  NumberInputField,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  HStack,
-  VStack,
-  Grid,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
-  Select,
-  Box,
-  Flex,
-  Text,
-  Spacer,
-  Divider,
-  Link,
-} from "@chakra-ui/react";
-
-import { useEffect, useState } from "react";
+import { Button, Center, UnorderedList, ListItem, VStack, Box, Flex, Text, Divider, Link } from "@chakra-ui/react";
+import { usePrivy } from "@privy-io/react-auth";
 
 function LandingPage() {
+  const { login, authenticated, logout } = usePrivy();
+
   return (
     <VStack backgroundColor={"white"} padding={"16px"} height={"100%"} borderRadius={"3xl"} justifyContent={"space-between"} overflow={"hidden"}>
       <Box>
         <Text fontWeight={"bold"} fontSize={"2xl"} mb={"5px"}>
           Interac e-Transfer 💸
         </Text>
-        <Text fontWeight={"semibold"} fontSize={"xl"} mb={"15px"}>
+        <Text fontWeight={"semibold"} fontSize={"xl"} mb={"15px"} >
           Solid Financial Infrastructure for Everyone
         </Text>
-        
 
         <UnorderedList spacing={4}>
           <ListItem>
             <Text fontSize={"xl"} fontWeight={"semibold"}>
-              Send money to <i>any</i> e-mail 📧
+              Send money instantly to <i>any</i> e-mail 📧
             </Text>
           </ListItem>
           <ListItem>
             <Text fontSize={"xl"} fontWeight={"semibold"}>
-              Send and deposit from your crypto wallet or bank account 🏦
+              Works with your bank account or crypto wallet 🏦
             </Text>
           </ListItem>
           <ListItem>
             <Text fontSize={"xl"} fontWeight={"semibold"}>
-              The new standard of user-friendly Web3 UX ✨
+              As easy as Zelle. The new standard of friendly Web3 UX ✨
             </Text>
           </ListItem>
         </UnorderedList>
@@ -77,7 +40,7 @@ function LandingPage() {
           </Text>
         </Center>
         <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" />
-        <Button>Login</Button>
+        {authenticated === true ? <Button onClick={logout}>Logout</Button> : <Button onClick={login}>Login</Button>}
         <Center>
           <Text fontSize={"sm"} color={"gray.400"}>
             <Link href="https://github.com/xavierdmello/e-Transfer">Github</Link> - © 2023 Xavier D'Mello

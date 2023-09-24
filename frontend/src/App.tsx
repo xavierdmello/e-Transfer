@@ -9,7 +9,8 @@ import { ref, update, set, onValue, get } from "firebase/database";
 import Header from "./components/Header.tsx";
 import LandingPage from "./components/LandingPage.tsx";
 import Wallet from "./components/Wallet.tsx";
-
+import { hashEmail } from "./helperFunctions.ts";
+import db from "./firebase.ts";
 import {
   Button,
   Input,
@@ -46,9 +47,43 @@ import {
 } from "@chakra-ui/react";
 
 function App() {
-  const { login, authenticated, user, ready, logout, createWallet } = usePrivy();
   const [menu, setMenu] = useState("landing");
-  const ref = React.useRef(null);
+  const { login, authenticated, user, ready, createWallet } = usePrivy();
+  const { wallets } = useWallets();
+
+  useEffect(() => {
+    async function runEffect() {
+      if (ready && authenticated) {
+        if (user?.wallet) {
+          // make sure wallet is on correct network
+          const targetChainId = 420;
+          const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy")!;
+          const currentChainId: number = parseInt(embeddedWallet.chainId);
+
+          if (currentChainId !== targetChainId) {
+            await embeddedWallet.switchChain(targetChainId);
+          }
+        } else {
+          // In case embedded wallet creation bugged out when user first signed up.
+          createWallet();
+        }
+      }
+    }
+    runEffect();
+  }, [authenticated, ready, user]);
+
+  // Submit users info to firebase server
+  useEffect(() => {
+    if (ready && authenticated && user?.wallet) {
+      const path = ref(db, "users/");
+      const updates: { [key: string]: { email: string; address: string; name: string } } = {};
+      const email = user?.email?.address!;
+      const walletAddress = user?.wallet?.address!;
+
+      updates[hashEmail(email)] = { email: email, address: walletAddress, name: "John Doe" };
+      update(path, updates);
+    }
+  }, [ready, authenticated, user]);
 
   return (
     <Flex justifyContent={"center"} pt={["0", "10px"]} pb={["0", "10px"]} height={"100vh"} direction={"column"} backgroundColor={["brand", "#13482e"]}>
@@ -70,7 +105,7 @@ function App() {
           <Flex className="baller" height={"100%"} direction={"column"}>
             <Header setMenu={setMenu} menu={menu} />
 
-            {menu === "landing" ? <LandingPage /> : <Wallet />}
+            {ready && (menu === "landing" ? <LandingPage /> : <Wallet />)}
           </Flex>
         </Flex>
       </Center>
