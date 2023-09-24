@@ -286,6 +286,7 @@ function SendMoney() {
       setName(data.name);
     });
   }, []);
+  const { wallets } = useWallets();
 
   return (
     <Flex className="disableCaret" direction={"column"}>
@@ -304,10 +305,30 @@ function SendMoney() {
         </Text>
       </Flex>
 
-      <Flex padding={"16px"}>
+      <Flex direction={"column"} padding={"16px"} gap="8px">
         <Text fontWeight={"regular"} fontSize={"sm"}>
           From Account
         </Text>
+
+        <Flex direction={"row"} gap={"20px"} alignItems={"center"}>
+          <Select>
+            {wallets.map((wallet) => {
+              return <option value={wallet.address}>{wallet.address}</option>;
+            })}
+          </Select>
+
+          <Text fontWeight={"regular"} fontSize={"md"}>
+            ${balance ? formatUnits(balance, 18) : "0.00"}
+          </Text>
+        </Flex>
+
+        <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" my="8px" />
+
+        <Text fontWeight={"regular"} fontSize={"sm"}>
+          To
+        </Text>
+
+
       </Flex>
     </Flex>
   );
