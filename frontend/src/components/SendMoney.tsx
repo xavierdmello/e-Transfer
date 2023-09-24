@@ -80,6 +80,7 @@ function SendMoney() {
     functionName: "allowance",
     args: [activeWallet?.address as `0x${string}`, ETRANSFER_ADDRESS],
     enabled: typeof activeWallet !== "undefined",
+    watch: true,
   });
   const { data: linkedEmail, isLoading: isLinkedEmailLoading } = useContractRead({
     address: ETRANSFER_ADDRESS,
