@@ -64,7 +64,11 @@ function Header({ setMenu, menu }: { setMenu: (arg0: string) => void; menu: stri
   return (
     <Box backgroundColor={"brand"} borderTopRadius={"3xl"}>
       <Flex direction={"row"} width={"100%"} verticalAlign={"true"} alignItems={"center"} pl={"20px"} pr={"20px"}>
-        {menu !== "landing" && <ChevronLeftIcon color={"white"} boxSize={10} onClick={handleBack} />}
+        {menu !== "landing" && (
+          <Button variant={"link"} onClick={handleBack}>
+            <ChevronLeftIcon color={"white"} boxSize={10} />
+          </Button>
+        )}
 
         <Spacer />
         <Link href="https://www.interac.ca/en/consumers/products/interac-e-transfer/" isExternal>
@@ -72,7 +76,11 @@ function Header({ setMenu, menu }: { setMenu: (arg0: string) => void; menu: stri
         </Link>
 
         <Spacer />
-        {menu !== "landing" && <EditIcon color={"white"} boxSize={10} padding={"5px"} onClick={() => setMenu("settings")} />}
+        {menu !== "landing" && (
+          <Button variant={"link"} onClick={() => setMenu("settings")} >
+            <EditIcon color={"white"} boxSize={10} padding={"5px"} />
+          </Button>
+        )}
       </Flex>
     </Box>
   );

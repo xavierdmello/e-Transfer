@@ -48,6 +48,7 @@ import {
   Spacer,
 } from "@chakra-ui/react";
 import { getRedirectResult } from "firebase/auth";
+import { isCastable } from "../helperFunctions.ts";
 
 const ETRANSFER_ADDRESS = "0xB2D2f29e572577854306099DFA24B07596eC92a7";
 const TOKEN_ADDRESS = "0x62e6940856c42bD23C0c895824921678A37A62aE";
@@ -94,8 +95,8 @@ function SendMoney() {
   });
 
   const [destinationEmail, setDestinationEmail] = useState<string>("");
-  const [sendAmount, setSendAmount] = useState<string>("");
-  const [mintAmount, setMintAmount] = useState<string>("");
+  const [sendAmount, setSendAmount] = useState<string>("0");
+  const [mintAmount, setMintAmount] = useState<string>("5");
 
   const { config: sendTransferConfig } = usePrepareContractWrite({
     address: ETRANSFER_ADDRESS,
@@ -286,6 +287,7 @@ function SendMoney() {
   });
   const [name, setName] = useState<string>("");
   const [contacts, setContacts] = useState<Contact[]>([]);
+  
 
   useEffect(() => {
     return onValue(ref(db, "users/" + hashEmail(user?.email?.address!)), (snapshot) => {
@@ -297,8 +299,17 @@ function SendMoney() {
     });
   }, []);
 
-  const { wallets } = useWallets();
+  const [isSendTransferDisabled, setIsSendTransferDisabled] = useState<boolean>(false);
+  useEffect(() => {
+    if (allowance !== null && allowance !== undefined && allowance < parseUnits(sendAmount, 18)) {
+      setIsSendTransferDisabled(true);
+    } else {
+      setIsSendTransferDisabled(false);
+    }
+  }, [allowance, sendAmount]);
 
+  const { wallets } = useWallets();
+  console.log(isCastable(sendAmount));
   return (
     <Flex direction={"column"}>
       <Flex direction={"column"} px={"16px"} py={"8px"}>
@@ -379,7 +390,7 @@ function SendMoney() {
             <Text fontWeight={"regular"} fontSize={"xl"} mr={"5px"}>
               $
             </Text>
-            <NumberInput size={"sm"} width={"150px"}>
+            <NumberInput value={sendAmount} onChange={(newVal) => setSendAmount(newVal)} size={"sm"} width={"150px"}>
               <NumberInputField />
             </NumberInput>
           </Flex>
@@ -387,10 +398,22 @@ function SendMoney() {
 
         <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" my="8px" />
 
-        <Button isLoading={isApproveLoading || isApproveWaitingForConf}  height={"50px"} onClick={approve}>
-          Approve USDC
-        </Button>
-        <Button isLoading={isSendTransferWaitingForConf || isSendTransferLoading} backgroundColor={"brand"} height={"50px"} onClick={handleSendTransfer}>
+        {typeof allowance === "bigint" && allowance < parseUnits(sendAmount, 18) && (
+          <Button isLoading={isApproveLoading || isApproveWaitingForConf} height={"50px"} onClick={approve}>
+            Approve USDC
+          </Button>
+        )}
+
+        <Button
+          isDisabled={isSendTransferDisabled}
+          isLoading={isSendTransferWaitingForConf || isSendTransferLoading}
+          backgroundColor={isSendTransferDisabled ? "default" : "brand"}
+          height={"50px"}
+          onClick={handleSendTransfer}
+          variant={"outline"}
+          _hover={isSendTransferDisabled ? {} : { backgroundColor: "default" }}
+          _active={{ pointerEvents: isSendTransferDisabled ? "none" : "auto" }}
+        >
           Send money
         </Button>
       </Flex>
