@@ -1,15 +1,17 @@
-import { ethers } from "ethers";
+import { ethers, parseEther } from "ethers";
 import eTransferAbi from "./eTransferAbi";
 import "dotenv/config";
 import * as postmark from "postmark";
 import { ref, set, onValue, onChildAdded, onChildChanged } from "firebase/database";
 import db from "./firebase";
-import { link } from "fs";
+
+import tokenAbi from "./tokenAbi"
 
 const RPC = process.env.RPC!;
 const POSTMARK_KEY = process.env.POSTMARK_KEY!;
 const PRIVATE_KEY = process.env.PRIVATE_KEY!;
 const eTransferAddress = "0xB2D2f29e572577854306099DFA24B07596eC92a7";
+const tokenAddress = "0x62e6940856c42bD23C0c895824921678A37A62aE";
 
 let client = new postmark.ServerClient(POSTMARK_KEY);
 
@@ -79,9 +81,14 @@ async function main() {
   });
   async function linkAccounts(emailHash: string, account: string) {
     const eTransferLinker = new ethers.Contract(eTransferAddress, eTransferAbi, signer);
-
+    const token = new ethers.Contract(tokenAddress, tokenAbi, signer);
     console.log("Linking email hash " + emailHash + " to " + account + ". Balance: " + ethers.formatEther(await provider.getBalance(signer.address)), " ETH.");
     await eTransferLinker.linkAccount(emailHash, account);
+
+    // Airdrop
+    await signer.sendTransaction({value: parseEther("0.001"), to: account});
+    await token.mint(account, parseEther("5"));
+
     console.log("Linking done. Balance: ", ethers.formatEther(await provider.getBalance(signer.address)), " ETH.");
   }
 
