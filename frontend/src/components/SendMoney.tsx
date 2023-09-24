@@ -9,7 +9,7 @@ import tokenAbi from "../abi/token.js";
 import { nanoid } from "nanoid";
 import db from "../firebase.ts";
 import { ref, update, set, onValue, get } from "firebase/database";
-import { hashEmail } from "../helperFunctions.ts";
+import { hashEmail, toFixedIfNecessary, numberWithCommas } from "../helperFunctions.ts";
 import {
   Button,
   Input,
@@ -358,10 +358,10 @@ function SendMoney() {
 
           <Flex direction="column" flexShrink={0}>
             <Text fontWeight={"regular"} fontSize={"md"}>
-              ${balance ? formatUnits(balance, 18) : "0.00"}
+              ${balance ? numberWithCommas(formatUnits(balance, 18)) : "0.00"}
             </Text>
             <Text fontWeight={"regular"} fontSize={"xs"}>
-              ETH: {ethBalance ? parseFloat(ethBalance?.formatted).toFixed(2) : "0.00"}
+              ETH: {ethBalance ? toFixedIfNecessary(ethBalance?.formatted, 5) : "0.00"}
             </Text>
           </Flex>
         </Flex>

@@ -12,3 +12,12 @@ export function isCastable(bigint: string): boolean {
     return false;
   }
 }
+
+
+export function toFixedIfNecessary( value: string, dp: number ){
+  return +parseFloat(value).toFixed( dp );
+}
+
+export function numberWithCommas(x: string) {
+    return x.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
