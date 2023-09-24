@@ -47,7 +47,7 @@ import {
 
 function App() {
   const { login, authenticated, user, ready, logout, createWallet } = usePrivy();
-  const [menu, setMenu] = useState("landing");
+  const [menu, setMenu] = useState("wallet");
   const ref = React.useRef(null);
 
   return (

@@ -9,7 +9,7 @@ import tokenAbi from "../abi/token.js";
 import { nanoid } from "nanoid";
 import db from "../firebase.js";
 import { ref, update, set, onValue, get } from "firebase/database";
-
+import "../styles/wallet.css"
 import {
   Button,
   Input,
@@ -41,6 +41,10 @@ import {
   ModalCloseButton,
   useDisclosure,
   Select,
+  Box,
+  Flex,
+  Text
+
 } from "@chakra-ui/react";
 import { getRedirectResult } from "firebase/auth";
 
@@ -112,6 +116,7 @@ function Wallet() {
   const [destinationEmail, setDestinationEmail] = useState<string>("");
   const [sendAmount, setSendAmount] = useState<string>("");
   const [mintAmount, setMintAmount] = useState<string>("");
+  const [page, setPage] = useState<string>("wallet");
 
   const { config: sendTransferConfig } = usePrepareContractWrite({
     address: ETRANSFER_ADDRESS,
@@ -339,37 +344,34 @@ function Wallet() {
     });
 
     return (
-      <>
-        <Button onClick={login}>Login</Button>
-        <Button onClick={logout}>Logout</Button>
-
-        <h2>
-          Logged in as {user && user.email ? user.email.address.toLowerCase() : "???"} ({activeWallet?.address})
-        </h2>
-
-        {chain && <div>Connected to {chain.name}</div>}
-
-        {chains.map((x) => (
-          <Button disabled={!switchNetwork || x.id === chain?.id} key={x.id} onClick={() => switchNetwork?.(x.id)}>
-            {x.name}
-            {isLoading && pendingChainId === x.id && " (switching)"}
+      <Box backgroundColor={"white"} height={"100%"} borderRadius={"3xl"} overflow={"hidden"}>
+        <Flex direction={"row"} className="walletHeader">
+          <Button
+            onClick={() => setPage("wallet")}
+            width={"50%"}
+            height={"50px"}
+            borderRadius={"2xl"}
+            borderBottomStartRadius={"0px"}
+            backgroundColor={`${page === "wallet" ? "white" : "gray.100"}`}
+            _hover={{ backgroundColor: `${page === "wallet" ? "white" : "gray.100"}` }}
+          >
+            Send Money
           </Button>
-        ))}
-
-        <Heading>Autodeposit</Heading>
-
-        <Button isLoading={isEnableAutodepositLoading || isEnableAutodepositWaitingForConf} colorScheme="teal" onClick={enableAutodeposit}>
-          Enable Autodeposit
-        </Button>
-
-        <Heading>Mint USDC</Heading>
-        <NumberInput value={mintAmount} onChange={(valueString) => setMintAmount(valueString)}>
-          Balance: {balance ? formatUnits(balance, 18) : "???"} USDC
-          <NumberInputField placeholder="Mint Amount (USDC)" />
-          <Button colorScheme="teal" onClick={mint} isLoading={isMintLoading || isMintWaitingForConf}>
-            Mint
+          <Button
+            onClick={() => setPage("history")}
+            width={"50%"}
+            height={"50px"}
+            borderRadius={"2xl"}
+            borderBottomEndRadius={"0px"}
+            backgroundColor={`${page === "history" ? "white" : "gray.100"}`}
+            _hover={{ backgroundColor: `${page === "history" ? "white" : "gray.100"}` }}
+          >
+            History
           </Button>
-        </NumberInput>
+        </Flex>
+
+        <Text>{user?.email?.address.toLowerCase()}</Text>
+
 
         <Heading>Send</Heading>
         <Input
@@ -388,77 +390,8 @@ function Wallet() {
           Send
         </Button>
 
-        <Heading>Receive</Heading>
-        <HStack spacing={"24px"}>
-          {receivedTransfers.map((transfer) => (
-            <Card key={transfer.id}>
-              <CardHeader>From: {transfer.from}</CardHeader>
-              <CardBody>{formatUnits(transfer.amount, 18)} USDC</CardBody>
-              <CardFooter>
-                <Button colorScheme="teal" onClick={() => openDepositModal()}>
-                  Accept
-                </Button>
-                <Button
-                  colorScheme="red"
-                  disabled={!cancelTransfer}
-                  isLoading={isCancelTransferLoading || isCancelTransferWaitingForConf}
-                  onClick={() => cancelTransfer({ args: [transfer.index] })}
-                >
-                  Decline
-                </Button>
 
-                <Modal isOpen={isDepositModalOpen} onClose={closeDepositModal}>
-                  <ModalOverlay />
-                  <ModalContent>
-                    <ModalHeader>Deposit e-Transfer</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                      <Select value={depositModalChoice} onChange={(event) => setDepositModalChoice(event.target.value)} placeholder="Deposit Account">
-                        {allUserAccounts.map((account) => (
-                          <option key={account} value={account}>
-                            {account}
-                          </option>
-                        ))}
-                      </Select>
-                    </ModalBody>
-
-                    <ModalFooter>
-                      <Button
-                        disabled={!receiveTransfer}
-                        colorScheme="teal"
-                        isLoading={isReceiveTransferLoading || isReceiveTransferWaitingForConf}
-                        onClick={() => receiveTransfer({ args: [transfer.index, depositModalChoice as `0x${string}`] })}
-                      >
-                        Deposit
-                      </Button>
-                    </ModalFooter>
-                  </ModalContent>
-                </Modal>
-              </CardFooter>
-            </Card>
-          ))}
-        </HStack>
-
-        <Heading>Pending Transfers</Heading>
-        <HStack spacing={"24px"}>
-          {myPendingTransfers.map((transfer) => (
-            <Card key={transfer.id}>
-              <CardHeader>To: {transfer.to}</CardHeader>
-              <CardBody>{formatUnits(transfer.amount, 18)} USDC</CardBody>
-              <CardFooter>
-                <Button
-                  colorScheme="red"
-                  disabled={!cancelTransfer}
-                  isLoading={isCancelTransferLoading || isCancelTransferWaitingForConf}
-                  onClick={() => cancelTransfer({ args: [transfer.index] })}
-                >
-                  Cancel
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </HStack>
-      </>
+      </Box>
     );
   }
 }

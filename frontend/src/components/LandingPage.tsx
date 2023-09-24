@@ -31,17 +31,16 @@ import {
   Select,
   Box,
   Flex,
+
 } from "@chakra-ui/react";
 
 import { useEffect, useState } from "react";
 
 function LandingPage() {
   return (
-
-      <Box backgroundColor={"white"} height={"100%"} borderRadius={"3xl"} padding={"20px"}>
-        dasdsdsads
-      </Box>
-
+    <Box backgroundColor={"white"} height={"100%"} borderRadius={"3xl"} overflow={"hidden"}>
+      "ballaa"
+    </Box>
   );
 }
 
