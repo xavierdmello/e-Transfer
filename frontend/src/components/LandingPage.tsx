@@ -10,7 +10,7 @@ function LandingPage() {
         <Text fontWeight={"bold"} fontSize={"2xl"} mb={"5px"}>
           Interac e-Transfer 💸
         </Text>
-        <Text fontWeight={"semibold"} fontSize={"xl"} mb={"15px"} >
+        <Text fontWeight={"semibold"} fontSize={"xl"} mb={"15px"}>
           Solid Financial Infrastructure for Everyone
         </Text>
 
@@ -43,7 +43,10 @@ function LandingPage() {
         {authenticated === true ? <Button onClick={logout}>Logout</Button> : <Button onClick={login}>Login</Button>}
         <Center>
           <Text fontSize={"sm"} color={"gray.400"}>
-            <Link href="https://github.com/xavierdmello/e-Transfer">Github</Link> - © 2023 Xavier D'Mello
+            <Link isExternal href="https://github.com/xavierdmello/e-Transfer">
+              Github
+            </Link>{" "}
+            - © 2023 Xavier D'Mello
           </Text>
         </Center>
       </Flex>
