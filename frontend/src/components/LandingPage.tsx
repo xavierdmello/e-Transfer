@@ -1,25 +1,21 @@
-import { Button, Center, UnorderedList, ListItem, VStack, Box, Flex, Text, Divider, Link } from "@chakra-ui/react";
+import { Button, Center, UnorderedList, ListItem, VStack, Box, Flex, Text, Divider, Link, Tooltip } from "@chakra-ui/react";
+import { QuestionOutlineIcon, QuestionIcon } from "@chakra-ui/icons";
 import { usePrivy } from "@privy-io/react-auth";
 
 function LandingPage() {
   const { login } = usePrivy();
 
   return (
-    <VStack
-      className="disableCaret"
-      backgroundColor={"white"}
-      padding={"16px"}
-      height={"100%"}
-      borderRadius={"3xl"}
-      justifyContent={"space-between"}
-      overflow={"hidden"}
-    >
+    <VStack backgroundColor={"white"} padding={"16px"} height={"100%"} borderRadius={"3xl"} justifyContent={"space-between"} overflow={"hidden"}>
       <Box>
         <Text fontWeight={"bold"} fontSize={"2xl"} mb={"5px"}>
           Interac e-Transfer 💸
         </Text>
         <Text fontWeight={"semibold"} fontSize={"xl"} mb={"15px"}>
-          Solid Financial Infrastructure for Everyone
+          Solid Financial Infrastructure for Everyone{" "}
+          <Tooltip label="e-Transfer is the solution to depreciating currencies and unstable financial infrastructure in developing countries.">
+            <QuestionOutlineIcon color={"gray.400"} ml={"5px"} boxSize={4} />
+          </Tooltip>
         </Text>
 
         <UnorderedList spacing={4}>

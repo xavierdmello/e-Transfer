@@ -7,7 +7,7 @@ function History() {
     //     functionName: "getPendingTransfers",
     //     watch: true,
     //   });
-    
+
     //   const receivedTransfers: TransferWithId[] = [];
     //   const myPendingTransfers: TransferWithId[] = [];
     //   if (pendingTransfers) {
@@ -20,7 +20,7 @@ function History() {
     //       }
     //     });
     //   }
-  return <Box className="disableCaret">History</Box>;
+  return <Box>History</Box>;
 }
 
 export default History;

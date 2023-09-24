@@ -300,7 +300,7 @@ function SendMoney() {
   const { wallets } = useWallets();
 
   return (
-    <Flex className="disableCaret" direction={"column"}>
+    <Flex direction={"column"}>
       <Flex direction={"column"} px={"16px"} py={"8px"}>
         <Text fontWeight={"regular"} fontSize={"sm"}>
           Logged into e-Transfer®
