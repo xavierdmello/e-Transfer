@@ -103,7 +103,7 @@ function App() {
           borderBottomRadius={["3xl", "0xl"]}
           padding={"0px"}
           backgroundColor={"brand"}
-          overflow={"hidden"}
+   
           direction={"column"}
         >
           <Flex className="baller" height={"100%"} direction={"column"}>

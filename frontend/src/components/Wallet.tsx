@@ -9,7 +9,7 @@ import { Button, Box, Flex, Spacer } from "@chakra-ui/react";
 
 function Wallet({ menu, setMenu }: { menu: string; setMenu: (arg0: string) => void }) {
   return (
-    <Box backgroundColor={"white"} height={"100%"} borderRadius={"3xl"} overflow={"hidden"}>
+    <Box backgroundColor={"white"} height={"100%"} borderRadius={"3xl"} overflow={"auto"}>
       <Flex direction={"row"} className="walletHeader">
         <Button
           onClick={() => setMenu("sendMoney")}

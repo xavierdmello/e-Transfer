@@ -371,7 +371,7 @@ function SendMoney() {
               Amount
             </Text>
             <Button variant={"link"} fontWeight={"regular"} fontSize={"xs"}>
-              + Approve/Mint USDC
+              + Mint USDC
             </Button>
           </Flex>
 
@@ -386,6 +386,13 @@ function SendMoney() {
         </Flex>
 
         <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" my="8px" />
+
+        <Button isLoading={isApproveLoading || isApproveWaitingForConf}  height={"50px"} onClick={approve}>
+          Approve USDC
+        </Button>
+        <Button isLoading={isSendTransferWaitingForConf || isSendTransferLoading} backgroundColor={"brand"} height={"50px"} onClick={handleSendTransfer}>
+          Send money
+        </Button>
       </Flex>
     </Flex>
   );
