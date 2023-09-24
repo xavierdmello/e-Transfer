@@ -2,7 +2,7 @@ import { Button, Center, UnorderedList, ListItem, VStack, Box, Flex, Text, Divid
 import { usePrivy } from "@privy-io/react-auth";
 
 function LandingPage() {
-  const { login, authenticated, logout } = usePrivy();
+  const { login } = usePrivy();
 
   return (
     <VStack backgroundColor={"white"} padding={"16px"} height={"100%"} borderRadius={"3xl"} justifyContent={"space-between"} overflow={"hidden"}>
@@ -40,7 +40,7 @@ function LandingPage() {
           </Text>
         </Center>
         <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" />
-        {authenticated === true ? <Button onClick={logout}>Logout</Button> : <Button onClick={login}>Login</Button>}
+        <Button onClick={login}>Login</Button>    
         <Center>
           <Text fontSize={"sm"} color={"gray.400"}>
             <Link isExternal href="https://github.com/xavierdmello/e-Transfer">

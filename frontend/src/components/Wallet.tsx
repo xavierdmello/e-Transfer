@@ -7,39 +7,36 @@ import History from "./History.tsx";
 
 import { Button, Box, Flex, Spacer } from "@chakra-ui/react";
 
-function Wallet() {
-  const [page, setPage] = useState<string>("sendMoney");
-
+function Wallet({ menu, setMenu }: { menu: string; setMenu: (arg0: string) => void }) {
   return (
     <Box backgroundColor={"white"} height={"100%"} borderRadius={"3xl"} overflow={"hidden"}>
       <Flex direction={"row"} className="walletHeader">
         <Button
-          onClick={() => setPage("sendMoney")}
+          onClick={() => setMenu("sendMoney")}
           width={"50%"}
           height={"50px"}
           borderRadius={"2xl"}
           borderBottomStartRadius={"0px"}
-          backgroundColor={`${page === "sendMoney" ? "white" : "gray.100"}`}
-          _hover={{ backgroundColor: `${page === "sendMoney" ? "white" : "gray.100"}` }}
+          backgroundColor={`${menu === "sendMoney" ? "white" : "gray.100"}`}
+          _hover={{ backgroundColor: `${menu === "sendMoney" ? "white" : "gray.100"}` }}
         >
           Send Money
         </Button>
         <Button
-          onClick={() => setPage("history")}
+          onClick={() => setMenu("history")}
           width={"50%"}
           height={"50px"}
           borderRadius={"2xl"}
           borderBottomEndRadius={"0px"}
-          backgroundColor={`${page === "history" ? "white" : "gray.100"}`}
-          _hover={{ backgroundColor: `${page === "history" ? "white" : "gray.100"}` }}
+          backgroundColor={`${menu === "history" ? "white" : "gray.100"}`}
+          _hover={{ backgroundColor: `${menu === "history" ? "white" : "gray.100"}` }}
         >
           History
         </Button>
       </Flex>
-
       <Spacer />
-
-      {page === "sendMoney" ? <SendMoney /> : <History />}
+      {menu === "sendMoney" && <SendMoney />}
+      {menu === "history" && <History />}
     </Box>
   );
 }

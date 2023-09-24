@@ -52,6 +52,10 @@ function App() {
   const { wallets } = useWallets();
 
   useEffect(() => {
+    console.log("changed!")
+    console.log(user)
+    console.log(ready)
+    console.log(authenticated)
     async function runEffect() {
       if (ready && authenticated) {
         if (user?.wallet) {
@@ -105,7 +109,7 @@ function App() {
           <Flex className="baller" height={"100%"} direction={"column"}>
             <Header setMenu={setMenu} menu={menu} />
 
-            {ready && (menu === "landing" ? <LandingPage /> : <Wallet />)}
+            {menu === "landing" ? <LandingPage /> : <Wallet setMenu={setMenu} menu={menu} />}
           </Flex>
         </Flex>
       </Center>
