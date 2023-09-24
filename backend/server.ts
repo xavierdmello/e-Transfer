@@ -106,7 +106,14 @@ async function main() {
           From: "etransfer@xavierdmello.com",
           To: toEmail,
           Subject: "INTERAC e-Transfer: " + fromName + " sent you money.",
-          TextBody: "Hi " + toEmail + ", " + fromName + " sent you $" + ethers.formatEther(amount) + " (USD).",
+          TextBody:
+            "Hi " +
+            toEmail +
+            ", " +
+            fromName +
+            " sent you $" +
+            ethers.formatEther(amount) +
+            " (USD). Deposit the transfer now: https://etransfer.xavierdmello.com/",
         });
         console.log("Sent pending transfer email to " + toEmail + " for " + ethers.formatEther(amount) + "USD.");
       });
