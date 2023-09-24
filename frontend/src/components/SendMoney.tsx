@@ -361,7 +361,7 @@ function SendMoney() {
               ${balance ? formatUnits(balance, 18) : "0.00"}
             </Text>
             <Text fontWeight={"regular"} fontSize={"xs"}>
-              ETH: {ethBalance?.formatted}
+              ETH: {ethBalance ? parseFloat(ethBalance?.formatted).toFixed(2) : "0.00"}
             </Text>
           </Flex>
         </Flex>
