@@ -40,11 +40,7 @@ function LandingPage() {
           </ListItem>
           <ListItem>
             <Text fontSize={"xl"} fontWeight={"semibold"}>
-              As easy as{" "}
-              <Link href="https://www.zellepay.com/" isExternal>
-                Zelle↗.
-              </Link>{" "}
-              Sign up now and get $5 for a limited time, on us 🤑
+              Sign up now and get $5, on us 🤑
             </Text>
           </ListItem>
         </UnorderedList>
