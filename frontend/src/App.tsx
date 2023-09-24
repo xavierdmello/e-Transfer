@@ -341,7 +341,19 @@ function App() {
     return (
       <>
         <Center>
-          <Container w={["100%", "75%"]} maxW={"800px"}>
+          <Container
+            w={["100%", "75%"]}
+            maxW={"800px"}
+            shadow={"sm"}
+            mt="1vh"
+            mb="1vh"
+            border={"1px solid"}
+            borderColor={"gray.200"}
+            borderRadius={"3xl"}
+
+            height={"98vh"}
+
+          >
             <Button onClick={login}>Login</Button>
             <Button onClick={logout}>Logout</Button>
 
@@ -374,7 +386,7 @@ function App() {
             </NumberInput>
 
             <Heading>Send</Heading>
-            <Input value={destinationEmail} onChange={(event) => setDestinationEmail(event.target.value)} placeholder="Destination Email"></Input>
+            <Input borderColor={"gray.200"} value={destinationEmail} onChange={(event) => setDestinationEmail(event.target.value)} placeholder="Destination Email"></Input>
             <NumberInput value={sendAmount} onChange={(valueString) => setSendAmount(valueString)}>
               <NumberInputField placeholder="Send Amount (USDC)" />
             </NumberInput>
