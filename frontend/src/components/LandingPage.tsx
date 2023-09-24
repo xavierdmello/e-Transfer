@@ -35,7 +35,7 @@ function LandingPage() {
               <Link href="https://www.zellepay.com/" isExternal>
                 Zelle↗.
               </Link>{" "}
-              The new standard of friendly Web3 UX ✨
+              The new standard of user-friendly Web3 UX ✨
             </Text>
           </ListItem>
         </UnorderedList>
