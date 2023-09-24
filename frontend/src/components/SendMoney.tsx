@@ -60,6 +60,12 @@ type TransferWithId = {
   id: string;
   index: bigint;
 };
+
+type Contact = {
+  email: string;
+  name: string;
+};
+
 function SendMoney() {
   const toast = useToast();
   const { user } = usePrivy();
@@ -279,13 +285,18 @@ function SendMoney() {
     }
   });
   const [name, setName] = useState<string>("");
+  const [contacts, setContacts] = useState<Contact[]>([{ name: "hi", email: "hi" }]);
 
   useEffect(() => {
     return onValue(ref(db, "users/" + hashEmail(user?.email?.address!)), (snapshot) => {
       const data = snapshot.val();
-      setName(data.name);
+      const name: string = data.name;
+      const contacts: Contact[] = data.contacts;
+      setName(name);
+      setContacts(contacts);
     });
   }, []);
+
   const { wallets } = useWallets();
 
   return (
@@ -313,7 +324,11 @@ function SendMoney() {
         <Flex direction={"row"} gap={"20px"} alignItems={"center"}>
           <Select>
             {wallets.map((wallet) => {
-              return <option value={wallet.address}>{wallet.address}</option>;
+              return (
+                <option key={wallet.address} value={wallet.address}>
+                  {wallet.address}
+                </option>
+              );
             })}
           </Select>
 
@@ -328,7 +343,17 @@ function SendMoney() {
           To
         </Text>
 
-
+        {(contacts  && contacts.length > 0) && (
+          <Select>
+            {contacts.map((contact) => {
+              return (
+                <option key={contact.email} value={contact.email}>
+                  {contact.name} \({contact.email}\)
+                </option>
+              );
+            })}
+          </Select>
+        )}
       </Flex>
     </Flex>
   );
