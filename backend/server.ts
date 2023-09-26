@@ -89,16 +89,28 @@ async function main() {
   async function linkAccounts(emailHash: string, account: string) {
     const eTransferLinker = new ethers.Contract(eTransferAddress, eTransferAbi, signer);
     const token = new ethers.Contract(tokenAddress, tokenAbi, signer);
-    console.log("Linking email hash " + emailHash + " to " + account + ". Balance: " + ethers.formatEther(await provider.getBalance(signer.address)), " ETH.");
-    let tx = await eTransferLinker.linkAccount(emailHash, account);
-    await tx.wait(3);
-    // Airdrop
-    tx = await signer.sendTransaction({ value: parseEther("0.002"), to: account });
-    await tx.wait(3);
-    tx = await token.mint(account, parseEther("5"));
-    await tx.wait(3);
 
-    console.log("Linking done. Balance: ", ethers.formatEther(await provider.getBalance(signer.address)), " ETH.");
+    // 1. Make sure acccount isn't already linked. Could happen with all these async/await calls.
+    const isLinked: boolean = await isAccountLinked(account);
+    if (isLinked === true) {
+      console.log("Account " + account + " is already linked. Skipping.");
+      return;
+    } else {
+      console.log("Account " + account + " is not linked. Linking now.");
+      console.log(
+        "Linking email hash " + emailHash + " to " + account + ". Balance: " + ethers.formatEther(await provider.getBalance(signer.address)),
+        " ETH."
+      );
+      let tx = await eTransferLinker.linkAccount(emailHash, account);
+      await tx.wait(3);
+      // Airdrop
+      tx = await signer.sendTransaction({ value: parseEther("0.002"), to: account });
+      await tx.wait(3);
+      tx = await token.mint(account, parseEther("5"));
+      await tx.wait(3);
+
+      console.log("Linking done. Balance: ", ethers.formatEther(await provider.getBalance(signer.address)), " ETH.");
+    }
   }
 
   async function isAccountLinked(address: string): Promise<boolean> {
