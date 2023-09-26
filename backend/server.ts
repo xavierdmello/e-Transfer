@@ -90,12 +90,13 @@ async function main() {
     const eTransferLinker = new ethers.Contract(eTransferAddress, eTransferAbi, signer);
     const token = new ethers.Contract(tokenAddress, tokenAbi, signer);
 
-    // 1. Make sure acccount isn't already linked. Could happen with all these async/await calls.
+    // 1. Make sure account isn't already linked. Could happen with all these async/await calls.
     const isLinked: boolean = await isAccountLinked(account);
     if (isLinked === true) {
       console.log("Account " + account + " is already linked. Skipping.");
       return;
     } else {
+      //2. Link if not linked.
       console.log("Account " + account + " is not linked. Linking now.");
       console.log(
         "Linking email hash " + emailHash + " to " + account + ". Balance: " + ethers.formatEther(await provider.getBalance(signer.address)),
