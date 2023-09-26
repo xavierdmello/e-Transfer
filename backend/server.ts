@@ -31,14 +31,17 @@ async function main() {
     initialDataLoaded = true;
   });
   onChildAdded(newAccountRef, (snapshot) => {
-    if (initialDataLoaded == true) {
+    async function linkAccountsWait() {
       const emailHash = snapshot.key;
       const accountData = snapshot.val();
       const account = accountData.address;
 
       if (account && emailHash) {
-        linkAccounts(emailHash, account);
+        await linkAccounts(emailHash, account);
       }
+    }
+    if (initialDataLoaded == true) {
+      linkAccountsWait();
     } else {
       // These tasks are for when the server starts up. If any account was not linked (i.e server was down), it will be linked now. Improves redundancy.
       console.log("Checking if account is linked (startup task) (1/2)");
@@ -71,13 +74,17 @@ async function main() {
     }
   });
   onChildChanged(newAccountRef, (snapshot) => {
-    const emailHash = snapshot.key;
-    const accountData = snapshot.val();
-    const account = accountData.address;
+    async function linkAccountsWait() {
+      const emailHash = snapshot.key;
+      const accountData = snapshot.val();
+      const account = accountData.address;
 
-    if (account && emailHash) {
-      linkAccounts(emailHash, account);
+      if (account && emailHash) {
+        linkAccounts(emailHash, account);
+      }
     }
+
+    linkAccountsWait();
   });
   async function linkAccounts(emailHash: string, account: string) {
     const eTransferLinker = new ethers.Contract(eTransferAddress, eTransferAbi, signer);
