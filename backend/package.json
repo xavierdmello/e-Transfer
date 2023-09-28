@@ -7,6 +7,7 @@
     "vite-node": "^0.34.3"
   },
   "scripts": {
-    "dev": "vite-node server.ts"
+    "dev": "vite-node server.ts",
+    "start": "vite-node server.ts"
   }
 }
