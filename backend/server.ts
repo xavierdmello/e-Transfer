@@ -1,9 +1,10 @@
-import { ethers, parseEther } from "ethers";
+import { ethers, parseEther, NonceManager } from "ethers";
 import eTransferAbi from "./eTransferAbi";
 import "dotenv/config";
 import * as postmark from "postmark";
 import { ref, set, onValue, onChildAdded, onChildChanged } from "firebase/database";
 import db from "./firebase";
+
 
 import tokenAbi from "./tokenAbi";
 
@@ -18,11 +19,13 @@ let client = new postmark.ServerClient(POSTMARK_KEY);
 // Order of events:
 // 1. On startup: server goes through all account in the database, makes sure they're linked, and if not, links them.
 // 2. Server goes into listening mode, and sends emails/links accounts as needed.
-async function main() {
-  const provider = new ethers.WebSocketProvider(RPC);
-  const contract = new ethers.Contract(eTransferAddress, eTransferAbi, provider);
-  const signer = new ethers.Wallet(PRIVATE_KEY, provider);
 
+const provider = new ethers.WebSocketProvider(RPC);
+const contract = new ethers.Contract(eTransferAddress, eTransferAbi, provider);
+const signer = new ethers.Wallet(PRIVATE_KEY, provider);
+const nonceManager = new NonceManager(signer);
+
+async function main() {
   console.log("e-Transfer server started.");
 
   const newAccountRef = ref(db, "users/");
@@ -87,8 +90,8 @@ async function main() {
     linkAccountsWait();
   });
   async function linkAccounts(emailHash: string, account: string) {
-    const eTransferLinker = new ethers.Contract(eTransferAddress, eTransferAbi, signer);
-    const token = new ethers.Contract(tokenAddress, tokenAbi, signer);
+    const eTransferLinker = new ethers.Contract(eTransferAddress, eTransferAbi, nonceManager);
+    const token = new ethers.Contract(tokenAddress, tokenAbi, nonceManager);
 
     // 1. Make sure account isn't already linked. Could happen with all these async/await calls.
     const isLinked: boolean = await isAccountLinked(account);
@@ -103,19 +106,19 @@ async function main() {
         " ETH."
       );
       let tx = await eTransferLinker.linkAccount(emailHash, account);
-      await tx.wait(3);
+      await tx.wait();
       // Airdrop
-      tx = await signer.sendTransaction({ value: parseEther("0.002"), to: account });
-      await tx.wait(3);
+      tx = await nonceManager.sendTransaction({ value: parseEther("0.002"), to: account });
+      await tx.wait();
       tx = await token.mint(account, parseEther("5"));
-      await tx.wait(3);
+      await tx.wait();
 
       console.log("Linking done. Balance: ", ethers.formatEther(await provider.getBalance(signer.address)), " ETH.");
     }
   }
 
   async function isAccountLinked(address: string): Promise<boolean> {
-    const eTransfer = new ethers.Contract(eTransferAddress, eTransferAbi, signer);
+    const eTransfer = new ethers.Contract(eTransferAddress, eTransferAbi, nonceManager);
     const linkedAccount = await eTransfer.linkedEmail(address);
     let isLinked = false;
 
