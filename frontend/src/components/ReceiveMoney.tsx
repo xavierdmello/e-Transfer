@@ -129,7 +129,7 @@ function ReceiveMoney() {
               <Text>Transfer</Text>
             </CardHeader>
             <CardBody>
-              <Text>`${formatEther(transfer.amount)}</Text>
+              <Text>${formatEther(transfer.amount)}</Text>
             </CardBody>
             <CardFooter>
               <Button
