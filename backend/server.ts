@@ -1,12 +1,12 @@
 import { ethers, parseEther, NonceManager } from "ethers";
-import eTransferAbi from "./eTransferAbi";
+import eTransferAbi from "./abi/eTransferAbi";
 import "dotenv/config";
 import * as postmark from "postmark";
 import { ref, set, onValue, onChildAdded, onChildChanged } from "firebase/database";
 import db from "./firebase";
 
 
-import tokenAbi from "./tokenAbi";
+import tokenAbi from "./abi/tokenAbi";
 
 const RPC = process.env.RPC!;
 const POSTMARK_KEY = process.env.POSTMARK_KEY!;
