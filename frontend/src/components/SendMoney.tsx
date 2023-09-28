@@ -72,7 +72,7 @@ function SendMoney() {
   const toast = useToast();
   const { user } = usePrivy();
   const { wallet: activeWallet, setActiveWallet } = usePrivyWagmi();
-//   const { isOpen: isAddContactOpen, onOpen: onAddContactOpen, onClose: onAddContactClose } = useDisclosure();
+  //   const { isOpen: isAddContactOpen, onOpen: onAddContactOpen, onClose: onAddContactClose } = useDisclosure();
 
   const { data: allowance, isLoading: isAllowanceLoading } = useContractRead({
     address: TOKEN_ADDRESS,
@@ -101,11 +101,13 @@ function SendMoney() {
   const [sendAmount, setSendAmount] = useState<string>("0");
   const [mintAmount, setMintAmount] = useState<string>("5");
 
-  const { config: sendTransferConfig } = usePrepareContractWrite({
+  const { config: sendTransferConfig, refetch: refetchSendTransfer } = usePrepareContractWrite({
     address: ETRANSFER_ADDRESS,
     abi: eTransferAbi,
     functionName: "sendTransfer",
     args: [hashEmail(destinationEmail.toLowerCase()), parseUnits(sendAmount, 18)],
+    staleTime: 0,
+    cacheTime: 0,
   });
   const { write: sendTransfer, data: sendTransferData, isLoading: isSendTransferLoading } = useContractWrite(sendTransferConfig);
   const { isLoading: isSendTransferWaitingForConf } = useWaitForTransaction({
@@ -128,6 +130,13 @@ function SendMoney() {
       });
     },
   });
+
+  useEffect(() => {
+    async function waitForRefetchSendTransfer() {
+      await refetchSendTransfer();
+    }
+    waitForRefetchSendTransfer();
+  }, [allowance]);
 
   async function handleSendTransfer() {
     const checkUserPath = ref(db, "users/" + hashEmail(destinationEmail));
@@ -228,8 +237,6 @@ function SendMoney() {
     },
   });
 
- 
-
   const {
     write: cancelTransfer,
     data: cancelTransferData,
@@ -257,11 +264,9 @@ function SendMoney() {
   });
 
   const [depositModalChoice, setDepositModalChoice] = useState<string>();
-//   const [addContactModalEmail, setAddContactModalEmail] = useState<string>("");
-//   const [addContactModalName, setAddContactModalName] = useState<string>("");
+  //   const [addContactModalEmail, setAddContactModalEmail] = useState<string>("");
+  //   const [addContactModalName, setAddContactModalName] = useState<string>("");
   const allUserAccounts: string[] = [];
-
-
 
   user?.linkedAccounts.forEach((account) => {
     if (account.type === "wallet") {
@@ -269,7 +274,7 @@ function SendMoney() {
     }
   });
   const [name, setName] = useState<string>("");
-//   const [contacts, setContacts] = useState<Contact[]>([]);
+  //   const [contacts, setContacts] = useState<Contact[]>([]);
 
   useEffect(() => {
     return onValue(ref(db, "users/" + hashEmail(user?.email?.address!)), (snapshot) => {
@@ -280,19 +285,19 @@ function SendMoney() {
     });
   }, []);
 
-//   useEffect(() => {
-//     return onValue(ref(db, "users/" + hashEmail(user?.email?.address!) + "/contacts/"), (snapshot) => {
-//       const data = snapshot.val();
+  //   useEffect(() => {
+  //     return onValue(ref(db, "users/" + hashEmail(user?.email?.address!) + "/contacts/"), (snapshot) => {
+  //       const data = snapshot.val();
 
-//       const contacts: Contact = data;
-//       console.log(data);
-//       console.log("contact:");
-//       console.log(contacts);
-//       console.log("users/" + hashEmail(user?.email?.address!) + "/contacts/");
+  //       const contacts: Contact = data;
+  //       console.log(data);
+  //       console.log("contact:");
+  //       console.log(contacts);
+  //       console.log("users/" + hashEmail(user?.email?.address!) + "/contacts/");
 
-//       //   setContacts(contacts && contacts.length > 0 ? contacts : []);
-//     });
-//   }, []);
+  //       //   setContacts(contacts && contacts.length > 0 ? contacts : []);
+  //     });
+  //   }, []);
 
   const [isSendTransferDisabled, setIsSendTransferDisabled] = useState<boolean>(false);
   useEffect(() => {
