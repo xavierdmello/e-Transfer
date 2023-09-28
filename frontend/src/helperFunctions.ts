@@ -13,7 +13,6 @@ export function isCastable(bigint: string): boolean {
   }
 }
 
-
 export function toFixedIfNecessary( value: string, dp: number ){
   return +parseFloat(value).toFixed( dp );
 }

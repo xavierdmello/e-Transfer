@@ -71,13 +71,13 @@ function Header({ setMenu, menu }: { setMenu: (arg0: string) => void; menu: stri
         )}
 
         <Spacer />
-        <Link href="https://www.interac.ca/en/consumers/products/interac-e-transfer/" isExternal>
+        <Link href="https://github.com/xavierdmello/e-Transfer" isExternal>
           <Image src={et} boxSize={"100px"} objectFit={"contain"} padding={"0px"} height={"80px"} />
         </Link>
 
         <Spacer />
         {menu !== "landing" && (
-          <Button variant={"link"} onClick={() => setMenu("settings")} >
+          <Button variant={"link"} onClick={() => setMenu("settings")}>
             <EditIcon color={"white"} boxSize={10} padding={"5px"} />
           </Button>
         )}
