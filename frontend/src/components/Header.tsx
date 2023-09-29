@@ -55,6 +55,14 @@ function Header({ setMenu, menu }: { setMenu: (arg0: string) => void; menu: stri
     }
   }
 
+  async function handleSettingsButton() {
+    if (menu === "settings") {
+      setMenu("sendMoney");
+    } else {
+      setMenu("settings");
+    }
+  }
+
   useEffect(() => {
     if (ready && !authenticated) {
       setMenu("landing");
@@ -79,7 +87,7 @@ function Header({ setMenu, menu }: { setMenu: (arg0: string) => void; menu: stri
 
         <Spacer />
         {menu !== "landing" && (
-          <Button variant={"link"} onClick={() => setMenu("settings")}>
+          <Button variant={"link"} onClick={() => handleSettingsButton()}>
             <EditIcon color={"white"} boxSize={10} padding={"5px"} />
           </Button>
         )}
