@@ -11,8 +11,8 @@ import tokenAbi from "./abi/tokenAbi";
 const RPC = process.env.RPC!;
 const POSTMARK_KEY = process.env.POSTMARK_KEY!;
 const PRIVATE_KEY = process.env.PRIVATE_KEY!;
-const eTransferAddress = "0xB2D2f29e572577854306099DFA24B07596eC92a7";
-const tokenAddress = "0x62e6940856c42bD23C0c895824921678A37A62aE";
+const eTransferAddress = "0xa3FC7B0deD74e155D011f46e4b15D3f11EAbc05b";
+const tokenAddress = "0xC772fD3a973eB72E32740F1bc5F426BcD082CBc8";
 
 let client = new postmark.ServerClient(POSTMARK_KEY);
 

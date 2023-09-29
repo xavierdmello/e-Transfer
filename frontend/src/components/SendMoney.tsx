@@ -51,8 +51,8 @@ import {
 import { getRedirectResult } from "firebase/auth";
 import { isCastable } from "../helperFunctions.ts";
 
-const ETRANSFER_ADDRESS = "0xB2D2f29e572577854306099DFA24B07596eC92a7";
-const TOKEN_ADDRESS = "0x62e6940856c42bD23C0c895824921678A37A62aE";
+const ETRANSFER_ADDRESS = "0xa3FC7B0deD74e155D011f46e4b15D3f11EAbc05b";
+const TOKEN_ADDRESS = "0xC772fD3a973eB72E32740F1bc5F426BcD082CBc8";
 
 type TransferWithId = {
   from: `0x${string}`;

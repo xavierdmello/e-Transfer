@@ -1,326 +1,326 @@
 export default [
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "_token",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "_token",
+        type: "address",
+      },
     ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    stateMutability: "nonpayable",
+    type: "constructor",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "from",
-        "type": "bytes32"
+        indexed: true,
+        internalType: "bytes32",
+        name: "from",
+        type: "bytes32",
       },
       {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "to",
-        "type": "bytes32"
+        indexed: true,
+        internalType: "bytes32",
+        name: "to",
+        type: "bytes32",
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
       },
       {
-        "indexed": true,
-        "internalType": "enum ETransfer.Party",
-        "name": "party",
-        "type": "uint8"
-      }
+        indexed: true,
+        internalType: "enum ETransfer.Party",
+        name: "party",
+        type: "uint8",
+      },
     ],
-    "name": "TransferCancelled",
-    "type": "event"
+    name: "TransferCancelled",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "from",
-        "type": "bytes32"
+        indexed: true,
+        internalType: "bytes32",
+        name: "from",
+        type: "bytes32",
       },
       {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "to",
-        "type": "bytes32"
+        indexed: true,
+        internalType: "bytes32",
+        name: "to",
+        type: "bytes32",
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
     ],
-    "name": "TransferPending",
-    "type": "event"
+    name: "TransferPending",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "from",
-        "type": "bytes32"
+        indexed: true,
+        internalType: "bytes32",
+        name: "from",
+        type: "bytes32",
       },
       {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "to",
-        "type": "bytes32"
+        indexed: true,
+        internalType: "bytes32",
+        name: "to",
+        type: "bytes32",
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
       },
       {
-        "indexed": true,
-        "internalType": "bool",
-        "name": "autodeposit",
-        "type": "bool"
-      }
+        indexed: true,
+        internalType: "bool",
+        name: "autodeposit",
+        type: "bool",
+      },
     ],
-    "name": "TransferSent",
-    "type": "event"
+    name: "TransferSent",
+    type: "event",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
     ],
-    "name": "autodepositAddress",
-    "outputs": [
+    name: "autodepositAddress",
+    outputs: [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "pendingTransferIndex",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "pendingTransferIndex",
+        type: "uint256",
+      },
     ],
-    "name": "cancelTransfer",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "cancelTransfer",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "getPendingTransfers",
-    "outputs": [
+    inputs: [],
+    name: "getPendingTransfers",
+    outputs: [
       {
-        "components": [
+        components: [
           {
-            "internalType": "bytes32",
-            "name": "from",
-            "type": "bytes32"
+            internalType: "bytes32",
+            name: "from",
+            type: "bytes32",
           },
           {
-            "internalType": "bytes32",
-            "name": "to",
-            "type": "bytes32"
+            internalType: "bytes32",
+            name: "to",
+            type: "bytes32",
           },
           {
-            "internalType": "address",
-            "name": "refundAddress",
-            "type": "address"
+            internalType: "address",
+            name: "refundAddress",
+            type: "address",
           },
           {
-            "internalType": "uint256",
-            "name": "amount",
-            "type": "uint256"
-          }
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+          },
         ],
-        "internalType": "struct ETransfer.Transfer[]",
-        "name": "",
-        "type": "tuple[]"
-      }
+        internalType: "struct ETransfer.Transfer[]",
+        name: "",
+        type: "tuple[]",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "bytes32",
-        "name": "emailHash",
-        "type": "bytes32"
+        internalType: "bytes32",
+        name: "emailHash",
+        type: "bytes32",
       },
       {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
     ],
-    "name": "linkAccount",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "linkAccount",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
     ],
-    "name": "linkedEmail",
-    "outputs": [
+    name: "linkedEmail",
+    outputs: [
       {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "linker",
-    "outputs": [
+    inputs: [],
+    name: "linker",
+    outputs: [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
     ],
-    "name": "pendingTransfers",
-    "outputs": [
+    name: "pendingTransfers",
+    outputs: [
       {
-        "internalType": "bytes32",
-        "name": "from",
-        "type": "bytes32"
+        internalType: "bytes32",
+        name: "from",
+        type: "bytes32",
       },
       {
-        "internalType": "bytes32",
-        "name": "to",
-        "type": "bytes32"
+        internalType: "bytes32",
+        name: "to",
+        type: "bytes32",
       },
       {
-        "internalType": "address",
-        "name": "refundAddress",
-        "type": "address"
+        internalType: "address",
+        name: "refundAddress",
+        type: "address",
       },
       {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "pendingTransferIndex",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "pendingTransferIndex",
+        type: "uint256",
       },
       {
-        "internalType": "address",
-        "name": "depositAddress",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "depositAddress",
+        type: "address",
+      },
     ],
-    "name": "receiveTransfer",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "receiveTransfer",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "bytes32",
-        "name": "to",
-        "type": "bytes32"
+        internalType: "bytes32",
+        name: "to",
+        type: "bytes32",
       },
       {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
     ],
-    "name": "sendTransfer",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "sendTransfer",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "value",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "value",
+        type: "address",
+      },
     ],
-    "name": "setAutodepositAddress",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "setAutodepositAddress",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "newLinker",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "newLinker",
+        type: "address",
+      },
     ],
-    "name": "setLinker",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "setLinker",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "token",
-    "outputs": [
+    inputs: [],
+    name: "token",
+    outputs: [
       {
-        "internalType": "contract IERC20",
-        "name": "",
-        "type": "address"
-      }
+        internalType: "contract IERC20",
+        name: "",
+        type: "address",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
-  }
+    stateMutability: "view",
+    type: "function",
+  },
 ] as const;
