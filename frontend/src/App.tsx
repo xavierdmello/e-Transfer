@@ -9,6 +9,7 @@ import { ref, update, set, onValue, get } from "firebase/database";
 import Header from "./components/Header.tsx";
 import LandingPage from "./components/LandingPage.tsx";
 import Wallet from "./components/Wallet.tsx";
+import Settings from "./components/Settings.tsx";
 import { hashEmail } from "./helperFunctions.ts";
 import db from "./firebase.ts";
 import {
@@ -52,7 +53,6 @@ function App() {
   const { wallets } = useWallets();
 
   useEffect(() => {
-
     async function runEffect() {
       if (ready && authenticated) {
         if (user?.wallet) {
@@ -72,6 +72,22 @@ function App() {
     }
     runEffect();
   }, [authenticated, ready, user]);
+
+  function getBodyElement() {
+    if (menu === "landing") {
+      return <LandingPage />;
+    } else if (menu === "wallet" || menu === "sendMoney" || menu === "receiveMoney") {
+      return <Wallet setMenu={setMenu} menu={menu} />;
+    } else if (menu === "settings") {
+      return <Settings />;
+    } else {
+      return (
+        <div>
+          <h1>Error: Invalid Menu '{menu}'</h1>
+        </div>
+      );
+    }
+  }
 
   // Submit users info to firebase server
   useEffect(() => {
@@ -100,13 +116,11 @@ function App() {
           borderBottomRadius={["3xl", "0xl"]}
           padding={"0px"}
           backgroundColor={"brand"}
-   
           direction={"column"}
         >
           <Flex className="baller" height={"100%"} direction={"column"}>
             <Header setMenu={setMenu} menu={menu} />
-
-            {menu === "landing" ? <LandingPage /> : <Wallet setMenu={setMenu} menu={menu} />}
+            {getBodyElement()}
           </Flex>
         </Flex>
       </Center>

@@ -50,6 +50,8 @@ function Header({ setMenu, menu }: { setMenu: (arg0: string) => void; menu: stri
   async function handleBack() {
     if (menu === "sendMoney" || menu === "receiveMoney") {
       await logout();
+    } else if (menu === "settings") {
+      setMenu("sendMoney");
     }
   }
 
