@@ -1,8 +1,8 @@
 import { getDatabase, ref, set, onValue, onChildAdded } from "firebase/database";
 import { initializeApp } from "firebase/app";
-
+import { databaseURL } from "../config";
 const firebaseConfig = {
-  databaseURL: "https://e-transfer-prod-default-rtdb.firebaseio.com/",
+  databaseURL: databaseURL,
 };
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);

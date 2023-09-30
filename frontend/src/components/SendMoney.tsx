@@ -4,8 +4,8 @@ import { usePrivyWagmi } from "@privy-io/wagmi-connector";
 import { useBalance, useNetwork, useSwitchNetwork, useTransaction } from "wagmi";
 import { keccak256, encodeAbiParameters, parseAbiParameters, parseUnits, formatUnits, formatEther } from "viem";
 import { useContractRead, usePrepareContractWrite, useContractWrite, useWaitForTransaction } from "wagmi";
-import eTransferAbi from "../abi/etransfer.js";
-import tokenAbi from "../abi/token.js";
+import eTransferAbi from "../../../abi/eTransferAbi";
+import tokenAbi from "../../../abi/tokenAbi";
 import { nanoid } from "nanoid";
 import db from "../firebase.ts";
 import { ref, update, set, onValue, get } from "firebase/database";
@@ -50,9 +50,8 @@ import {
 } from "@chakra-ui/react";
 import { getRedirectResult } from "firebase/auth";
 import { isCastable } from "../helperFunctions.ts";
+import { ETRANSFER_ADDRESS, TOKEN_ADDRESS } from "../../../config";
 
-const ETRANSFER_ADDRESS = "0xa3FC7B0deD74e155D011f46e4b15D3f11EAbc05b";
-const TOKEN_ADDRESS = "0xC772fD3a973eB72E32740F1bc5F426BcD082CBc8";
 
 type TransferWithId = {
   from: `0x${string}`;

@@ -1,18 +1,18 @@
 import { ethers, parseEther, NonceManager } from "ethers";
-import eTransferAbi from "./abi/eTransferAbi";
+import eTransferAbi from "../abi/eTransferAbi";
 import "dotenv/config";
 import * as postmark from "postmark";
 import { ref, set, onValue, onChildAdded, onChildChanged } from "firebase/database";
 import db from "./firebase";
+import {ETRANSFER_ADDRESS, TOKEN_ADDRESS} from "../config";
 
 
-import tokenAbi from "./abi/tokenAbi";
+import tokenAbi from "../abi/tokenAbi";
 
 const RPC = process.env.RPC!;
 const POSTMARK_KEY = process.env.POSTMARK_KEY!;
 const PRIVATE_KEY = process.env.PRIVATE_KEY!;
-const eTransferAddress = "0xa3FC7B0deD74e155D011f46e4b15D3f11EAbc05b";
-const tokenAddress = "0xC772fD3a973eB72E32740F1bc5F426BcD082CBc8";
+
 
 let client = new postmark.ServerClient(POSTMARK_KEY);
 
@@ -21,7 +21,7 @@ let client = new postmark.ServerClient(POSTMARK_KEY);
 // 2. Server goes into listening mode, and sends emails/links accounts as needed.
 
 const provider = new ethers.WebSocketProvider(RPC);
-const contract = new ethers.Contract(eTransferAddress, eTransferAbi, provider);
+const contract = new ethers.Contract(ETRANSFER_ADDRESS, eTransferAbi, provider);
 const signer = new ethers.Wallet(PRIVATE_KEY, provider);
 const nonceManager = new NonceManager(signer);
 
@@ -90,8 +90,8 @@ async function main() {
     linkAccountsWait();
   });
   async function linkAccounts(emailHash: string, account: string) {
-    const eTransferLinker = new ethers.Contract(eTransferAddress, eTransferAbi, nonceManager);
-    const token = new ethers.Contract(tokenAddress, tokenAbi, nonceManager);
+    const eTransferLinker = new ethers.Contract(ETRANSFER_ADDRESS, eTransferAbi, nonceManager);
+    const token = new ethers.Contract(TOKEN_ADDRESS, tokenAbi, nonceManager);
 
     // 1. Make sure account isn't already linked. Could happen with all these async/await calls.
     const isLinked: boolean = await isAccountLinked(account);
@@ -118,7 +118,7 @@ async function main() {
   }
 
   async function isAccountLinked(address: string): Promise<boolean> {
-    const eTransfer = new ethers.Contract(eTransferAddress, eTransferAbi, nonceManager);
+    const eTransfer = new ethers.Contract(ETRANSFER_ADDRESS, eTransferAbi, nonceManager);
     const linkedAccount = await eTransfer.linkedEmail(address);
     let isLinked = false;
 
