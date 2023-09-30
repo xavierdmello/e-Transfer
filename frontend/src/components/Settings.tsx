@@ -46,6 +46,7 @@ import {
   Flex,
   Text,
   Spacer,
+  Switch,
   Breadcrumb,
 } from "@chakra-ui/react";
 import { getRedirectResult } from "firebase/auth";
@@ -72,8 +73,49 @@ function Settings() {
   const { wallet: activeWallet, setActiveWallet } = usePrivyWagmi();
 
   return (
-    <Box backgroundColor={"white"} height={"100%"} borderRadius={"3xl"} overflow={"auto"}>
-      <Flex direction={"column"}>Settings Page</Flex>
+    <Box backgroundColor={"white"} height={"100%"} borderRadius={"3xl"} overflow={"auto"} padding={"16px"}>
+      <Flex direction={"column"} gap={"8px"}>
+        <Center>
+          <Text fontSize={"16px"} fontWeight={"semibold"}>
+            e-Transfer® Settings
+          </Text>
+        </Center>
+
+        <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" my="8px" />
+
+        <Flex flexDirection={"column"}>
+          <Flex flexDirection={"row"} alignItems={"center"} justifyContent={"space-between"}>
+            <Flex flexDirection={"column"}>
+              <Text fontWeight={"medium"} fontSize={"lg"}>
+                Autodeposit
+              </Text>
+
+              <Text fontSize={"sm"} textColor={"gray.500"}>
+                Automatically deposit incoming e-Transfers to your wallet
+              </Text>
+            </Flex>
+
+            <Switch size="lg"></Switch>
+          </Flex>
+        </Flex>
+
+        <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" my="8px" />
+
+        <Flex direction={"row"} justifyContent={"space-between"} alignItems={"center"}>
+          <Flex direction={"column"}>
+            <Text fontWeight={"medium"} fontSize={"lg"}>
+              Nickname
+            </Text>
+            <Text fontSize={"sm"} textColor={"gray.500"}>
+              Displayed on outgoing transfers
+            </Text>
+          </Flex>
+
+          <Input width={"50%"} />
+        </Flex>
+
+        <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" my="8px" />
+      </Flex>
     </Box>
   );
 }
