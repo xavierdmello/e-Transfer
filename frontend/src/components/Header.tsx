@@ -72,7 +72,7 @@ function Header({ setMenu, menu }: { setMenu: (arg0: string) => void; menu: stri
   }, [ready, authenticated, user]);
 
   return (
-    <Box backgroundColor={"brand"} borderTopRadius={"3xl"}>
+    <Box backgroundColor={"brand.500"} borderTopRadius={"3xl"}>
       <Flex direction={"row"} width={"100%"} verticalAlign={"true"} alignItems={"center"} pl={"20px"} pr={"20px"}>
         {menu !== "landing" && (
           <Button variant={"link"} onClick={handleBack}>

@@ -17,7 +17,7 @@ import { PrivyWagmiConnector } from "@privy-io/wagmi-connector";
 // https://wagmi.sh/react/chains
 import { optimismGoerli } from "@wagmi/chains";
 import { configureChains } from "wagmi";
-import "./styles/index.css"
+import "./styles/index.css";
 // You may replace this with your preferred providers
 // https://wagmi.sh/react/providers/configuring-chains#multiple-providers
 import { jsonRpcProvider } from "@wagmi/core/providers/jsonRpc";
@@ -30,7 +30,20 @@ const breakpoints = {
 };
 
 const theme = extendTheme({
-  colors: { brand: "#ebab1f" },
+  colors: {
+    brand: {
+      "50": "#FDF6E8",
+      "100": "#F9E6BD",
+      "200": "#F5D793",
+      "300": "#F2C769",
+      "400": "#EEB73F",
+      "500": "#EAA715",
+      "600": "#BB8611",
+      "700": "#8C640D",
+      "800": "#5E4308",
+      "900": "#2F2104",
+    },
+  },
   fonts: { heading: `'Open Sans' sans-serif`, body: `'Open Sans', sans-serif` },
   breakpoints: breakpoints,
 });

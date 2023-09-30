@@ -103,19 +103,19 @@ function App() {
   }, [ready, authenticated, user]);
 
   return (
-    <Flex justifyContent={"center"} pt={["0", "10px"]} pb={["0", "10px"]} height={"100vh"} direction={"column"} backgroundColor={["brand", "#13482e"]}>
+    <Flex justifyContent={"center"} pt={["0", "10px"]} pb={["0", "10px"]} height={"100vh"} direction={"column"} backgroundColor={["brand.500", "#13482e"]}>
       <Center height={"100%"}>
         <Flex
           w={["100%", "60%"]}
           maxW={"500px"}
           shadow={"sm"}
           border={"5px solid"}
-          borderColor={"brand"}
+          borderColor={"brand.500"}
           borderRadius={["0", "3xl"]}
           height={"100%"}
           borderBottomRadius={["3xl", "0xl"]}
           padding={"0px"}
-          backgroundColor={"brand"}
+          backgroundColor={"brand.500"}
           direction={"column"}
         >
           <Flex className="baller" height={"100%"} direction={"column"}>

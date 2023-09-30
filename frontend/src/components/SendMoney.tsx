@@ -52,7 +52,6 @@ import { getRedirectResult } from "firebase/auth";
 import { isCastable } from "../helperFunctions.ts";
 import { ETRANSFER_ADDRESS, TOKEN_ADDRESS } from "../../../config";
 
-
 type TransferWithId = {
   from: `0x${string}`;
   to: `0x${string}`;
@@ -180,33 +179,6 @@ function SendMoney() {
   });
 
   const { data: ethBalance } = useBalance({ address: activeWallet?.address as `0x${string}`, watch: true });
-  const { config: enableAutodepositConfig } = usePrepareContractWrite({
-    address: ETRANSFER_ADDRESS,
-    abi: eTransferAbi,
-    functionName: "setAutodepositAddress",
-    args: [user?.wallet?.address as `0x${string}`],
-  });
-  const { write: enableAutodeposit, data: enableAutodepositData, isLoading: isEnableAutodepositLoading } = useContractWrite(enableAutodepositConfig);
-  const { isLoading: isEnableAutodepositWaitingForConf } = useWaitForTransaction({
-    hash: enableAutodepositData?.hash,
-    onSuccess(data) {
-      toast({
-        title: "Transaction success.",
-        status: "success",
-        isClosable: true,
-        duration: 6000,
-      });
-    },
-    onError(error) {
-      toast({
-        title: "Transaction error.",
-        description: error.message,
-        status: "error",
-        isClosable: true,
-        duration: 6000,
-      });
-    },
-  });
 
   const { config: mintConfig } = usePrepareContractWrite({
     address: TOKEN_ADDRESS,
@@ -469,10 +441,10 @@ function SendMoney() {
         <Button
           isDisabled={isSendTransferDisabled}
           isLoading={isSendTransferWaitingForConf || isSendTransferLoading}
-          backgroundColor={isSendTransferDisabled ? "default" : "brand"}
+          colorScheme={"brand"}
+          textColor={"black"}
           height={"50px"}
           onClick={handleSendTransfer}
-          variant={"outline"}
           _hover={isSendTransferDisabled ? {} : { backgroundColor: "default" }}
           _active={{ pointerEvents: isSendTransferDisabled ? "none" : "auto" }}
         >
