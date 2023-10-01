@@ -415,7 +415,7 @@ function SendMoney() {
             <Text fontWeight={"regular"} fontSize={"sm"}>
               Amount
             </Text>
-            <Button variant={"link"} fontWeight={"regular"} fontSize={"xs"}>
+            <Button variant={"link"} fontWeight={"regular"} isDisabled={isApproveLoading || isApproveWaitingForConf || isSendTransferLoading || isSendTransferWaitingForConf} fontSize={"xs"}>
               + Mint USDC
             </Button>
           </Flex>
