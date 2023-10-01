@@ -74,9 +74,24 @@ function Settings() {
   const { user } = usePrivy();
   const { isOpen: isAutodepositModalOpen, onOpen: onAutodepositModalOpen, onClose: onAutodepositModalClose } = useDisclosure();
 
+  const [nameInput, setNameInput] = useState("");
   const [autodepositAddressInput, setAutodepositAddressInput] = useState("None Selected");
   const [autodepositSwitchOn, setAutodepositSwitchOn] = useState(false);
   const [modalReady, setModalReady] = useState(false);
+
+  useEffect(() => {
+    return onValue(ref(db, `users/${hashEmail(user?.email?.address!)}/name`), (snapshot) => {
+      setNameInput(snapshot.val());
+    });
+  }, []);
+
+  useEffect(() => {
+    if (nameInput !== "") {
+      update(ref(db, `users/${hashEmail(user?.email?.address!)}`), {
+        name: nameInput,
+      });
+    }
+  }, [nameInput]);
 
   const { data: autodepositAddress, isLoading: isAutodepositAddressLoading } = useContractRead({
     address: ETRANSFER_ADDRESS,
@@ -293,7 +308,7 @@ function Settings() {
             </Text>
           </Flex>
 
-          <Input width={"50%"} placeholder="John Doe" />
+          <Input width={"50%"} placeholder="John Doe" value={nameInput} onChange={(e) => setNameInput(e.target.value)} />
         </Flex>
 
         <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" my="8px" />
