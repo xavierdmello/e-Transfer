@@ -75,7 +75,7 @@ function LandingPage({
               </Text>
             </Center>
             <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" />
-            <Button onClick={login}>Login</Button>
+            <Button onClick={login} colorScheme="brand" textColor={"black"}> Login</Button>
             <Center>
               <Text fontSize={"sm"} color={"gray.400"}>
                 <Link isExternal textDecor={"underline"} href="https://github.com/xavierdmello/e-Transfer">
