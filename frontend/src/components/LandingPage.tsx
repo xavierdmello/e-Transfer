@@ -1,4 +1,21 @@
-import { Button, Center, UnorderedList, ListItem, VStack, Box, Flex, Text, Divider, Link, Tooltip, Input } from "@chakra-ui/react";
+import {
+  Button,
+  Center,
+  UnorderedList,
+  ListItem,
+  VStack,
+  Box,
+  Flex,
+  Text,
+  Divider,
+  Link,
+  Tooltip,
+  Input,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+} from "@chakra-ui/react";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import { QuestionOutlineIcon, QuestionIcon } from "@chakra-ui/icons";
 import { usePrivy } from "@privy-io/react-auth";
@@ -16,6 +33,7 @@ function LandingPage({
 }) {
   const { login, authenticated, ready, user } = usePrivy();
   const [subPage, setSubPage] = useState("nickname");
+  const isError = nickname === "" || nickname === undefined || nickname === null;
 
   useEffect(() => {
     if (ready && authenticated && user?.email?.address) {
@@ -75,7 +93,10 @@ function LandingPage({
               </Text>
             </Center>
             <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" />
-            <Button onClick={login} colorScheme="brand" textColor={"black"}> Login</Button>
+            <Button onClick={login} colorScheme="brand" textColor={"black"}>
+              {" "}
+              Login
+            </Button>
             <Center>
               <Text fontSize={"sm"} color={"gray.400"}>
                 <Link isExternal textDecor={"underline"} href="https://github.com/xavierdmello/e-Transfer">
@@ -92,7 +113,7 @@ function LandingPage({
       )}
 
       {subPage === "nickname" && (
-        <Flex direction={"column"} height={"100%"} justifyContent={"space-between"}>
+        <Flex direction={"column"} height={"100%"} width={"100%"} justifyContent={"space-between"}>
           <Flex direction={"column"}>
             <Text fontWeight={"bold"} fontSize={"2xl"} mb={"5px"}>
               What's your name? 💭
@@ -102,7 +123,8 @@ function LandingPage({
             </Text>
             <Flex direction={"row"} gap={"8px"}>
               <Input placeholder="Nickname" value={nickname} onChange={(e) => setNickname(e.target.value)}></Input>
-              <Button colorScheme="brand" onClick={() => setNicknameSet(true)}>
+
+              <Button isDisabled={isError} colorScheme="brand" onClick={() => setNicknameSet(true)}>
                 <ArrowForwardIcon color={"black"} />
               </Button>
             </Flex>
