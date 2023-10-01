@@ -27,6 +27,10 @@ import {
   NumberInput,
   NumberInputField,
   Card,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
   CardHeader,
   CardBody,
   CardFooter,
@@ -97,6 +101,16 @@ function SendMoney() {
 
   const [destinationEmail, setDestinationEmail] = useState<string>("");
   const [sendAmount, setSendAmount] = useState<string>("0");
+
+  const isSendAmountValid = sendAmount !== "" && sendAmount !== undefined && sendAmount !== null && parseFloat(sendAmount) > 0;
+  const showSendAmountError = !isSendAmountValid  && sendAmount !== "0";
+
+  const regex = new RegExp(
+    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  );
+
+  const isDestinationEmailValid = regex.test(destinationEmail);
+  const showDestinationEmailError = !isDestinationEmailValid && destinationEmail !== "";
 
 
   const { config: sendTransferConfig, refetch: refetchSendTransfer } = usePrepareContractWrite({
@@ -395,7 +409,10 @@ function SendMoney() {
 
           {/* input email */}
         </Flex>
-        <Input value={destinationEmail} placeholder="Recipient's email" onChange={(e) => setDestinationEmail(e.target.value)}></Input>
+        <FormControl isInvalid={showDestinationEmailError}>
+          <Input value={destinationEmail} placeholder="Recipient's email" onChange={(e) => setDestinationEmail(e.target.value)}></Input>
+          {showDestinationEmailError && <FormErrorMessage>Invalid Email</FormErrorMessage>}
+        </FormControl>
 
         {/* 
         <Select>
@@ -436,11 +453,16 @@ function SendMoney() {
             <Text fontWeight={"regular"} fontSize={"xl"} mr={"5px"}>
               $
             </Text>
-            <NumberInput value={sendAmount} onChange={(newVal) => setSendAmount(newVal)} size={"sm"} width={"150px"}>
-              <NumberInputField />
-            </NumberInput>
+            <FormControl isInvalid={showSendAmountError}>
+              <NumberInput value={sendAmount} onChange={(newVal) => setSendAmount(newVal)} size={"sm"} width={"150px"}>
+                <NumberInputField />
+              </NumberInput>
+
+              {showSendAmountError && <FormErrorMessage position={"absolute"}>Invalid Amount</FormErrorMessage>}
+            </FormControl>
           </Flex>
         </Flex>
+        {showSendAmountError && <Spacer mb={"8px"} />}
 
         <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" my="8px" />
 
@@ -451,7 +473,7 @@ function SendMoney() {
         )}
 
         <Button
-          isDisabled={isSendTransferDisabled}
+          isDisabled={isSendTransferDisabled || isDestinationEmailValid === false || isSendAmountValid === false}
           isLoading={isSendTransferWaitingForConf || isSendTransferLoading}
           colorScheme={"brand"}
           textColor={"black"}
