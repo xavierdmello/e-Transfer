@@ -445,8 +445,6 @@ function SendMoney() {
           textColor={"black"}
           height={"50px"}
           onClick={handleSendTransfer}
-          _hover={isSendTransferDisabled ? {} : { backgroundColor: "default" }}
-          _active={{ pointerEvents: isSendTransferDisabled ? "none" : "auto" }}
         >
           Send money
         </Button>

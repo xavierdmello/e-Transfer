@@ -134,6 +134,7 @@ function ReceiveMoney() {
               <Button
                 isLoading={isReceiveTransferWaitingForConf || isReceiveTransferLoading}
                 colorScheme={"brand"}
+                textColor={"black"}
                 onClick={() => receiveTransfer({ args: [transfer.index, activeWallet?.address as `0x${string}`] })}
               >
                 Deposit
