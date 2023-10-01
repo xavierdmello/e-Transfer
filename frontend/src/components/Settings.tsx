@@ -68,7 +68,6 @@ type Contact = {
 };
 
 function Settings() {
-  handleSetAutodeposit;
   const toast = useToast();
   const { wallet: activeWallet, setActiveWallet } = usePrivyWagmi();
   const { wallets } = useWallets();
@@ -78,6 +77,7 @@ function Settings() {
 
   const [autodepositAddressInput, setAutodepositAddressInput] = useState("None Selected");
   const [autodepositSwitchOn, setAutodepositSwitchOn] = useState(false);
+  const [turnAutodepositOffFlag, setTurnAutodepositOffFlag] = useState(false);
 
   const { data: autodepositAddress, isLoading: isAutodepositAddressLoading } = useContractRead({
     address: ETRANSFER_ADDRESS,
@@ -96,11 +96,14 @@ function Settings() {
     }
   }
 
-  // If autodeposit is already on, reflect that in the ui
+  // Reflect autodeposit blockchain state
   useEffect(() => {
     if (autodepositAddress !== undefined && autodepositAddress !== null && autodepositAddress !== zeroAddress) {
       setAutodepositAddressInput(autodepositAddress);
       setAutodepositSwitchOn(true);
+    } else {
+      setAutodepositAddressInput("None Selected");
+      setAutodepositSwitchOn(false);
     }
   }, [autodepositAddress]);
 
@@ -118,11 +121,19 @@ function Settings() {
     if (prevAutodepositSwitchOnRef.current === true && autodepositSwitchOn === false) {
       if (autodepositAddress !== undefined && autodepositAddress !== null && autodepositAddress !== zeroAddress) {
         setAutodepositAddressInput("None Selected");
-        handleSetAutodeposit();
+        setTurnAutodepositOffFlag(true);
       }
     }
     prevAutodepositSwitchOnRef.current = autodepositSwitchOn;
   }, [autodepositSwitchOn, autodepositAddress]);
+  useEffect(() => {
+    if (autodepositAddress !== undefined && autodepositAddress !== null && autodepositAddress !== zeroAddress) {
+      if (turnAutodepositOffFlag === true) {
+        setTurnAutodepositOffFlag(false);
+        handleSetAutodeposit();
+      }
+    }
+  }, [turnAutodepositOffFlag, autodepositAddress]);
 
   const {
     write: setAutodeposit,
@@ -154,8 +165,7 @@ function Settings() {
       });
     },
   });
-  console.log("POO SHGL:");
-  console.log(autodepositAddressInput);
+
   return (
     <Box backgroundColor={"white"} height={"100%"} borderRadius={"3xl"} overflow={"auto"} padding={"16px"}>
       <Modal isOpen={isAutodepositModalOpen} onClose={onAutodepositModalClose}>
