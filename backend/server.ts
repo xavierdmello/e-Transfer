@@ -18,7 +18,7 @@ let client = new postmark.ServerClient(POSTMARK_KEY);
 // 1. On startup: server goes through all account in the database, makes sure they're linked, and if not, links them.
 // 2. Server goes into listening mode, and sends emails/links accounts as needed.
 
-const provider = new ethers.WebSocketProvider(RPC);
+const provider = new ethers.JsonRpcProvider(RPC);
 const contract = new ethers.Contract(ETRANSFER_ADDRESS, eTransferAbi, provider);
 const signer = new ethers.Wallet(PRIVATE_KEY, provider);
 const nonceManager = new NonceManager(signer);
