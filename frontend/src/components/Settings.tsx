@@ -73,11 +73,10 @@ function Settings() {
   const { wallets } = useWallets();
   const { user } = usePrivy();
   const { isOpen: isAutodepositModalOpen, onOpen: onAutodepositModalOpen, onClose: onAutodepositModalClose } = useDisclosure();
-  const prevAutodepositSwitchOnRef = useRef(false);
 
   const [autodepositAddressInput, setAutodepositAddressInput] = useState("None Selected");
   const [autodepositSwitchOn, setAutodepositSwitchOn] = useState(false);
-  const [turnAutodepositOffFlag, setTurnAutodepositOffFlag] = useState(false);
+  const [modalReady, setModalReady] = useState(false);
 
   const { data: autodepositAddress, isLoading: isAutodepositAddressLoading } = useContractRead({
     address: ETRANSFER_ADDRESS,
@@ -89,12 +88,32 @@ function Settings() {
   });
 
   function handleSetAutodeposit() {
-    if (autodepositAddressInput === "None Selected") {
+    const autodepositIsCurrentlyOn: boolean = autodepositAddress !== undefined && autodepositAddress !== null && autodepositAddress !== zeroAddress;
+    console.log(autodepositIsCurrentlyOn.toString());
+
+    if (autodepositIsCurrentlyOn) {
       setAutodeposit({ args: [zeroAddress] });
     } else {
-      setAutodeposit({ args: [autodepositAddressInput as `0x${string}`] });
+      // If user has no crypto accounts linked
+      if (wallets.length === 1) {
+        setAutodeposit({ args: [activeWallet?.address as `0x${string}`] });
+      } else {
+        // If user has other accounts linked, open the modal to select the wallet to deposit to
+        setAutodepositAddressInput(activeWallet?.address!);
+        setModalReady(true);
+      }
     }
   }
+
+  // Open modal once default wallet is selected
+  useEffect(() => {
+    if (modalReady) {
+      if (autodepositAddressInput !== "None Selected") {
+        setModalReady(false);
+        onAutodepositModalOpen();
+      }
+    }
+  }, [modalReady, autodepositAddress]);
 
   // Reflect autodeposit blockchain state
   useEffect(() => {
@@ -106,34 +125,6 @@ function Settings() {
       setAutodepositSwitchOn(false);
     }
   }, [autodepositAddress]);
-
-  // If the user turns autodeposit on (from off), open the modal to select the wallet to deposit to
-  useEffect(() => {
-    if (autodepositSwitchOn === true) {
-      if (autodepositAddress === undefined || autodepositAddress === null || autodepositAddress === zeroAddress) {
-        onAutodepositModalOpen();
-      }
-    }
-  }, [autodepositSwitchOn, autodepositAddress]);
-
-  // If the user turns autodeposit off (from on), disable autodeposit
-  useEffect(() => {
-    if (prevAutodepositSwitchOnRef.current === true && autodepositSwitchOn === false) {
-      if (autodepositAddress !== undefined && autodepositAddress !== null && autodepositAddress !== zeroAddress) {
-        setAutodepositAddressInput("None Selected");
-        setTurnAutodepositOffFlag(true);
-      }
-    }
-    prevAutodepositSwitchOnRef.current = autodepositSwitchOn;
-  }, [autodepositSwitchOn, autodepositAddress]);
-  useEffect(() => {
-    if (autodepositAddress !== undefined && autodepositAddress !== null && autodepositAddress !== zeroAddress) {
-      if (turnAutodepositOffFlag === true) {
-        setTurnAutodepositOffFlag(false);
-        handleSetAutodeposit();
-      }
-    }
-  }, [turnAutodepositOffFlag, autodepositAddress]);
 
   const {
     write: setAutodeposit,
@@ -173,41 +164,42 @@ function Settings() {
         <ModalContent>
           <ModalHeader>Enable Autodeposit</ModalHeader>
           <ModalCloseButton />
+
           <ModalBody>
-            <Text mb={"16px"}>Choose the wallet you want to automatically deposit incoming e-Transfers to:</Text>
+            <Text mb={"16px"}>Choose the account you want to automatically deposit incoming e-Transfers to:</Text>
 
             <Select
               value={autodepositAddressInput}
               onChange={(e) => {
                 setAutodepositAddressInput(e.target.value);
               }}
-              defaultValue={"e-Transfer® wallet"}
             >
-              {[
-                <option key="None Selected" value="None Selected">
-                  None Selected
-                </option>,
-                ...wallets.map((wallet) => {
-                  if (user?.wallet?.address === wallet.address) {
-                    return (
-                      <option key={wallet.address} value={wallet.address}>
-                        e-Transfer® wallet
-                      </option>
-                    );
-                  } else {
-                    return (
-                      <option key={wallet.address} value={wallet.address}>
-                        {wallet.address}
-                      </option>
-                    );
-                  }
-                }),
-              ]}
+              {wallets.map((wallet) => {
+                if (user?.wallet?.address === wallet.address) {
+                  return (
+                    <option key={wallet.address} value={wallet.address}>
+                      e-Transfer® wallet
+                    </option>
+                  );
+                } else {
+                  return (
+                    <option key={wallet.address} value={wallet.address}>
+                      {wallet.address}
+                    </option>
+                  );
+                }
+              })}
             </Select>
           </ModalBody>
 
-          <ModalFooter>
-            <Button isLoading={isSetAutodepoitLoading || isSetAutodepoitWaitingForConf} colorScheme="brand" textColor={"black"} onClick={handleSetAutodeposit}>
+          <ModalFooter justifyContent={"space-between"}>
+            <Button variant={"link"}>+ Link Account</Button>
+            <Button
+              isLoading={isSetAutodepoitLoading || isSetAutodepoitWaitingForConf}
+              colorScheme="brand"
+              textColor={"black"}
+              onClick={() => setAutodeposit({ args: [autodepositAddressInput as `0x${string}`] })}
+            >
               Enable Autodeposit
             </Button>
           </ModalFooter>
@@ -223,56 +215,71 @@ function Settings() {
 
         <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" my="8px" />
 
-        <Flex flexDirection={"column"}>
-          <Flex flexDirection={"row"} alignItems={"center"} justifyContent={"space-between"}>
-            <Flex flexDirection={"column"} mr="8px">
-              <Text fontWeight={"medium"} fontSize={"lg"}>
-                Autodeposit
-              </Text>
+        <Flex flexDirection={"row"} alignItems={"center"} justifyContent={"space-between"}>
+          <Flex flexDirection={"column"} mr="8px">
+            <Text fontWeight={"medium"} fontSize={"lg"}>
+              Autodeposit
+            </Text>
 
-              <Text fontSize={"sm"} textColor={"gray.500"}>
-                Automatically deposit incoming e-Transfers to your wallet
-              </Text>
-            </Flex>
+            <Text fontSize={"sm"} textColor={"gray.500"}>
+              Automatically deposit incoming <br /> e-Transfers to your wallet
+            </Text>
+          </Flex>
 
-            <Switch size="lg" isChecked={autodepositSwitchOn} onChange={() => setAutodepositSwitchOn(!autodepositSwitchOn)}></Switch>
+          <Flex>
+            {(isSetAutodepoitLoading || isSetAutodepoitWaitingForConf) && <Spinner color="brand.500" colorScheme="brand" mx={"12px"} />}
+            <Switch
+              size="lg"
+              isDisabled={isSetAutodepoitLoading || isSetAutodepoitWaitingForConf}
+              isChecked={autodepositSwitchOn}
+              onChange={handleSetAutodeposit}
+              colorScheme="brand"
+            ></Switch>
           </Flex>
         </Flex>
 
         <Flex
           direction={"row"}
           alignItems={"center"}
+          justifyContent={"space-between"}
           gap={"12px"}
           mt={"10px"}
-          display={autodepositAddress === zeroAddress || autodepositAddress === null || autodepositAddress === undefined ? "none" : "block"}
+          display={autodepositAddress === zeroAddress || autodepositAddress === null || autodepositAddress === undefined ? "none" : "flex"}
         >
-          <Text whiteSpace={"nowrap"} fontSize={"sm"} fontWeight={"medium"}>
+          <Text whiteSpace={"nowrap"} fontSize={"sm"} fontWeight={"regular"}>
             Deposit To:
           </Text>
-          <Select
-            value={autodepositAddressInput}
-            onChange={(e) => {
-              setAutodepositAddressInput(e.target.value);
-              handleSetAutodeposit();
-            }}
-          >
-            {wallets.map((wallet) => {
-              if (user?.wallet?.address === wallet.address) {
-                return (
-                  <option key={wallet.address} value={wallet.address}>
-                    e-Transfer® wallet
-                  </option>
-                );
-              } else {
-                return (
-                  <option key={wallet.address} value={wallet.address}>
-                    {wallet.address}
-                  </option>
-                );
-              }
-            })}
-          </Select>
+          <Button variant={"link"} isDisabled={isSetAutodepoitLoading || isSetAutodepoitWaitingForConf} fontWeight={"regular"} fontSize={"sm"}>
+            + Link Account
+          </Button>
         </Flex>
+        <Select
+          value={autodepositAddressInput}
+          isDisabled={isSetAutodepoitLoading || isSetAutodepoitWaitingForConf}
+          onChange={(e) => {
+            setAutodepositAddressInput(e.target.value);
+            setAutodeposit({ args: [e.target.value as `0x${string}`] });
+          }}
+          display={autodepositAddress === zeroAddress || autodepositAddress === null || autodepositAddress === undefined ? "none" : "flex"}
+        >
+          {wallets.map((wallet) => {
+            if (user?.wallet?.address === wallet.address) {
+              return (
+                <option key={wallet.address} value={wallet.address}>
+                  e-Transfer® wallet
+                </option>
+              );
+            } else {
+              return (
+                <option key={wallet.address} value={wallet.address}>
+                  {wallet.address}
+                </option>
+              );
+            }
+          })}
+        </Select>
+
+        <Flex float={"right"}></Flex>
 
         <Divider h="1px" backgroundColor={"gray.200"} orientation="horizontal" my="8px" />
 
