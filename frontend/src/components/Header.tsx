@@ -39,16 +39,28 @@ import {
 
 import { useEffect, useState } from "react";
 import et from "../assets/et.png";
-import back from "../assets/back.png";
-import settings from "../assets/settings.png";
 import { usePrivy } from "@privy-io/react-auth";
 import { ChevronLeftIcon, EditIcon } from "@chakra-ui/icons";
 
-function Header({ setMenu, menu }: { setMenu: (arg0: string) => void; menu: string }) {
+function Header({
+  setMenu,
+  menu,
+  nicknameSet,
+  setNicknameSet,
+  setNickname
+}: {
+  setMenu: (arg0: string) => void;
+  menu: string;
+  nicknameSet: boolean;
+  setNicknameSet: (arg0: boolean) => void;
+  setNickname: (arg0: string) => void;
+}) {
   const { logout, authenticated, ready, user } = usePrivy();
 
   async function handleBack() {
     if (menu === "sendMoney" || menu === "receiveMoney") {
+      setNicknameSet(false)
+      setNickname("");
       await logout();
     } else if (menu === "settings") {
       setMenu("sendMoney");
@@ -66,10 +78,10 @@ function Header({ setMenu, menu }: { setMenu: (arg0: string) => void; menu: stri
   useEffect(() => {
     if (ready && !authenticated) {
       setMenu("landing");
-    } else if (ready && authenticated && user?.wallet && menu === "landing") {
+    } else if (ready && authenticated && user?.wallet && menu === "landing" && nicknameSet) {
       setMenu("sendMoney");
     }
-  }, [ready, authenticated, user]);
+  }, [ready, authenticated, user, nicknameSet]);
 
   return (
     <Box backgroundColor={"brand.500"} borderTopRadius={"3xl"}>

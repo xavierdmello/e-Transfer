@@ -51,6 +51,9 @@ function App() {
   const [menu, setMenu] = useState("landing");
   const { login, authenticated, user, ready, createWallet } = usePrivy();
   const { wallets } = useWallets();
+  const [nickname, setNickname] = useState("");
+  const [nicknameSet, setNicknameSet] = useState(false);
+  const { wallet: activeWallet } = usePrivyWagmi();
 
   useEffect(() => {
     async function runEffect() {
@@ -75,7 +78,7 @@ function App() {
 
   function getBodyElement() {
     if (menu === "landing") {
-      return <LandingPage />;
+      return <LandingPage setNickname={setNickname} nickname={nickname} setNicknameSet={setNicknameSet} />;
     } else if (menu === "wallet" || menu === "sendMoney" || menu === "receiveMoney") {
       return <Wallet setMenu={setMenu} menu={menu} />;
     } else if (menu === "settings") {
@@ -91,7 +94,7 @@ function App() {
 
   // Submit users info to firebase server
   useEffect(() => {
-    if (ready && authenticated && user?.wallet) {
+    if (ready && authenticated && user?.wallet && nicknameSet) {
       const path = ref(db, "users/");
       const updates: { [key: string]: { email: string; address: string; name: string } } = {};
       const email = user?.email?.address!;
@@ -102,13 +105,23 @@ function App() {
         if (!snapshot.exists() || !snapshot.child("name").exists() || !snapshot.child("address").exists()) {
           // If the data doesn't exist, update the database with the user's info
           const updates = {
-            [hashEmail(email)]: { email: email, address: walletAddress, name: "John Doe" },
+            [hashEmail(email)]: { email: email, address: walletAddress, name: nickname },
           };
           update(path, updates);
         }
       });
     }
-  }, [ready, authenticated, user]);
+  }, [ready, authenticated, user, nicknameSet, nickname]);
+
+  useEffect(() => {
+    return onValue(ref(db, "users/" + hashEmail(user?.email?.address!)), (snapshot) => {
+      if (snapshot.exists() && snapshot.child("name").exists()) {
+        if (snapshot.child("name").val() !== "") {
+          setNicknameSet(true);
+        }
+      }
+    });
+  }, [activeWallet, user]);
 
   return (
     <Flex justifyContent={"center"} pt={["0", "10px"]} pb={["0", "10px"]} height={"100vh"} direction={"column"} backgroundColor={["brand.500", "#13482e"]}>
@@ -127,7 +140,7 @@ function App() {
           direction={"column"}
         >
           <Flex className="baller" height={"100%"} direction={"column"}>
-            <Header setMenu={setMenu} menu={menu} />
+            <Header setMenu={setMenu} menu={menu} nicknameSet={nicknameSet} setNicknameSet={setNicknameSet} setNickname={setNickname} />
             {getBodyElement()}
           </Flex>
         </Flex>
