@@ -4,15 +4,13 @@ import "dotenv/config";
 import * as postmark from "postmark";
 import { ref, set, onValue, onChildAdded, onChildChanged } from "firebase/database";
 import db from "./firebase";
-import {ETRANSFER_ADDRESS, TOKEN_ADDRESS} from "../config";
-
+import { ETRANSFER_ADDRESS, TOKEN_ADDRESS } from "../config";
 
 import tokenAbi from "../abi/tokenAbi";
 
 const RPC = process.env.RPC!;
 const POSTMARK_KEY = process.env.POSTMARK_KEY!;
 const PRIVATE_KEY = process.env.PRIVATE_KEY!;
-
 
 let client = new postmark.ServerClient(POSTMARK_KEY);
 
@@ -130,25 +128,33 @@ async function main() {
 
   contract.on("TransferPending", (from, to, amount) => {
     onValue(ref(db, "users/" + to), (snapshot) => {
-      const toEmail = snapshot.val().email;
-      onValue(ref(db, "users/" + from), (snapshot) => {
-        const fromName = snapshot.val().name;
+      if (snapshot.exists()) {
+        const toEmail = snapshot.val().email;
+        onValue(ref(db, "users/" + from), (snapshot) => {
+          if (snapshot.exists()) {
+            const fromName = snapshot.val().name;
 
-        client.sendEmail({
-          From: "etransfer@xavierdmello.com",
-          To: toEmail,
-          Subject: "INTERAC e-Transfer: " + fromName + " sent you money.",
-          TextBody:
-            "Hi " +
-            toEmail +
-            ", " +
-            fromName +
-            " sent you $" +
-            ethers.formatEther(amount) +
-            " (USD). Deposit the transfer now: https://etransfer.xavierdmello.com/",
+            client.sendEmail({
+              From: "etransfer@xavierdmello.com",
+              To: toEmail,
+              Subject: "INTERAC e-Transfer: " + fromName + " sent you money.",
+              TextBody:
+                "Hi " +
+                toEmail +
+                ", " +
+                fromName +
+                " sent you $" +
+                ethers.formatEther(amount) +
+                " (USD). Deposit the transfer now: https://etransfer.xavierdmello.com/",
+            });
+            console.log("Sent pending transfer email to " + toEmail + " for " + ethers.formatEther(amount) + "USD.");
+          } else {
+            console.error("no snapshot for " + from)
+          }
         });
-        console.log("Sent pending transfer email to " + toEmail + " for " + ethers.formatEther(amount) + "USD.");
-      });
+      } else {
+        console.error("no snapshot for " + to)
+      }
     });
   });
 
