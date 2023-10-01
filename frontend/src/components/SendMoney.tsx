@@ -97,7 +97,7 @@ function SendMoney() {
 
   const [destinationEmail, setDestinationEmail] = useState<string>("");
   const [sendAmount, setSendAmount] = useState<string>("0");
-  const [mintAmount, setMintAmount] = useState<string>("5");
+
 
   const { config: sendTransferConfig, refetch: refetchSendTransfer } = usePrepareContractWrite({
     address: ETRANSFER_ADDRESS,
@@ -184,7 +184,7 @@ function SendMoney() {
     address: TOKEN_ADDRESS,
     abi: tokenAbi,
     functionName: "mint",
-    args: [activeWallet?.address as `0x${string}`, parseUnits(mintAmount, 18)],
+    args: [activeWallet?.address as `0x${string}`, parseUnits("5", 18)],
   });
   const { write: mint, data: mintData, isLoading: isMintLoading } = useContractWrite(mintConfig);
   const { isLoading: isMintWaitingForConf } = useWaitForTransaction({
@@ -415,9 +415,21 @@ function SendMoney() {
             <Text fontWeight={"regular"} fontSize={"sm"}>
               Amount
             </Text>
-            <Button variant={"link"} fontWeight={"regular"} isDisabled={isApproveLoading || isApproveWaitingForConf || isSendTransferLoading || isSendTransferWaitingForConf} fontSize={"xs"}>
-              + Mint USDC
-            </Button>
+
+            <Flex alignItems={"center"}>
+              <Button
+                variant={"link"}
+                onClick={mint}
+                fontWeight={"regular"}
+                isDisabled={
+                  isApproveLoading || isApproveWaitingForConf || isSendTransferLoading || isSendTransferWaitingForConf || isMintWaitingForConf || isMintLoading
+                }
+                fontSize={"xs"}
+              >
+                + Mint Test USDC
+              </Button>
+              {isMintWaitingForConf || (isMintLoading && <Spinner ml="8px" color={"gray.400"} size={"xs"} />)}
+            </Flex>
           </Flex>
 
           <Flex direction={"row"} alignItems={"center"}>
