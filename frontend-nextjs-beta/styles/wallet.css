@@ -1,0 +1,8 @@
+.walletHeader {
+    background: linear-gradient(
+    #EDF2F7 0%,
+    #EDF2F7 50%,
+    white 50%,
+    white 100%
+  );
+}
