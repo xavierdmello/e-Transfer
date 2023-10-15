@@ -1794,6 +1794,16 @@
   resolved "https://registry.yarnpkg.com/@firebase/webchannel-wrapper/-/webchannel-wrapper-0.10.3.tgz#c894a21e8c911830e36bbbba55903ccfbc7a7e25"
   integrity sha512-+ZplYUN3HOpgCfgInqgdDAbkGGVzES1cs32JJpeqoh87SkRobGXElJx+1GZSaDqzFL+bYiX18qEcBK76mYs8uA==
 
+"@fontsource/open-sans@^5.0.15":
+  version "5.0.15"
+  resolved "https://registry.yarnpkg.com/@fontsource/open-sans/-/open-sans-5.0.15.tgz#9afe2fab06e151772832b5bee30fb9318ddbf9c0"
+  integrity sha512-gnvxTADG72CWWN57//x5leVJqQthgkhHao3/dK6wkn5wO7uTLYpiViLfUJYeV274juC73EvGQnc/3Y+9IEST2A==
+
+"@fontsource/raleway@^5.0.13":
+  version "5.0.13"
+  resolved "https://registry.yarnpkg.com/@fontsource/raleway/-/raleway-5.0.13.tgz#56b4fc7280fbf7e4c8f3954fd0f1f4174e9e3539"
+  integrity sha512-LWw7+Ahz7CGSQuj6T68N3m8/6Pa9+b+jlDP6TOeyr7HUA+32HDAXFpBv7WSqxeTzRWmPcAJS5IRUkGrYG/hl1w==
+
 "@grpc/grpc-js@~1.9.0":
   version "1.9.5"
   resolved "https://registry.yarnpkg.com/@grpc/grpc-js/-/grpc-js-1.9.5.tgz#22e283754b7b10d1ad26c3fb21849028dcaabc53"
@@ -2633,6 +2643,11 @@
   dependencies:
     "@typescript-eslint/types" "6.7.5"
     eslint-visitor-keys "^3.4.1"
+
+"@wagmi/chains@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@wagmi/chains/-/chains-1.8.0.tgz#70e5fd0d50c8f9b8e63585eaf8544481e71707d3"
+  integrity sha512-UXo0GF0Cl0+neKC2KAmVAahv8L/5rACbFRRqkDvHMefzY6Fh7yzJd8F4GaGNNG3w4hj8eUB/E3+dEpaTYDN62w==
 
 "@wagmi/connectors@3.1.2":
   version "3.1.2"
