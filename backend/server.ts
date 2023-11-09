@@ -18,6 +18,10 @@ let client = new postmark.ServerClient(POSTMARK_KEY);
 // 1. On startup: server goes through all account in the database, makes sure they're linked, and if not, links them.
 // 2. Server goes into listening mode, and sends emails/links accounts as needed.
 
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 const provider = new ethers.JsonRpcProvider(RPC);
 const contract = new ethers.Contract(ETRANSFER_ADDRESS, eTransferAbi, provider);
 const signer = new ethers.Wallet(PRIVATE_KEY, provider);
@@ -54,6 +58,7 @@ async function main() {
 
           if (account && emailHash) {
             try {
+              await delay(Math.random() * 10_000) // Random delay to prevent RPC rate limit
               const isLinked: boolean = await isAccountLinked(account);
 
               if (isLinked === false) {
