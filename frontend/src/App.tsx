@@ -102,13 +102,17 @@ function App() {
 
       // Check if the user's email and address already exist in the database
       get(ref(db, "users/" + hashEmail(email))).then((snapshot) => {
-        if (!snapshot.exists() || !snapshot.child("name").exists() || !snapshot.child("address").exists()) {
+        if (
+          !snapshot.exists() ||
+          (snapshot.child("name").exists() && snapshot.child("name").val() == "") ||
+          (snapshot.child("address").exists() && snapshot.child("address").val() == "")
+        ) {
           // If the data doesn't exist, update the database with the user's info
           const updates = {
             [hashEmail(email)]: { email: email, address: walletAddress, name: nickname },
           };
           update(path, updates);
-        }
+        } 
       });
     }
   }, [ready, authenticated, user, nicknameSet, nickname]);
