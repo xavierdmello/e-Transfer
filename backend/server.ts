@@ -225,7 +225,7 @@ async function main() {
             text:
               "Hi " +
               toEmail +
-              "," +
+              ", " +
               fromName +
               " has sent you $" +
               ethers.formatEther(amount) +
@@ -234,7 +234,7 @@ async function main() {
           sgMail
             .send(msg)
             .then(() => {
-              console.log("Sent transfer received and deposited automatically email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
+              console.log("Sent transfer received and deposited automatically email to " + toEmail + " for " + ethers.formatEther(amount) + "USD.");
             })
             .catch((error: any) => {
               if (error instanceof Error) {
