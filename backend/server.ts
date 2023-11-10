@@ -1,7 +1,7 @@
 import { ethers, parseEther, NonceManager } from "ethers";
 import eTransferAbi from "../abi/eTransferAbi";
 import "dotenv/config";
-import { ref, set, onValue, onChildAdded, onChildChanged } from "firebase/database";
+import { ref, set, onValue, onChildAdded, onChildChanged,get } from "firebase/database";
 import db from "./firebase";
 import { ETRANSFER_ADDRESS, TOKEN_ADDRESS } from "../config";
 import tokenAbi from "../abi/tokenAbi";
@@ -131,10 +131,10 @@ async function main() {
   }
 
   contract.on("TransferPending", (from, to, amount) => {
-    onValue(ref(db, "users/" + to), (snapshot) => {
+    get(ref(db, "users/" + to)).then((snapshot) => {
       if (snapshot.exists()) {
         const toEmail = snapshot.val().email;
-        onValue(ref(db, "users/" + from), (snapshot) => {
+        get(ref(db, "users/" + from)).then((snapshot) => {
           if (snapshot.exists()) {
             const fromName = snapshot.val().name;
 
@@ -151,7 +151,7 @@ async function main() {
                 ethers.formatEther(amount) +
                 " (USD). Deposit the transfer now: https://etransfer.xavierdmello.com/",
             };
-    
+
             sgMail
               .send(msg)
               .then(() => {
@@ -173,12 +173,12 @@ async function main() {
   });
 
   contract.on("TransferSent", (from, to, amount, autodeposit) => {
-    onValue(ref(db, "users/" + from), (snapshot) => {
+    get(ref(db, "users/" + from)).then((snapshot) => {
       const fromEmail = snapshot.val().email;
       const fromName = snapshot.val().name;
 
       if (autodeposit === false) {
-        onValue(ref(db, "users/" + to), (snapshot) => {
+        get(ref(db, "users/" + to)).then((snapshot) => {
           const toEmail = snapshot.val().email;
           const msg = {
             to: fromEmail,
@@ -199,7 +199,7 @@ async function main() {
             });
         });
       } else {
-        onValue(ref(db, "users/" + to), (snapshot) => {
+        get(ref(db, "users/" + to)).then((snapshot) => {
           const toEmail = snapshot.val().email;
           let msg = {
             to: fromEmail,
@@ -253,10 +253,10 @@ async function main() {
   }
   contract.on("TransferCancelled", (from, to, amount, party: BigInt) => {
     console.log("Debug: transfer has been cancellled.");
-    onValue(ref(db, "users/" + from), (fromSnapshot) => {
+    get(ref(db, "users/" + from)).then((fromSnapshot) => {
       console.log("Value fetched.");
       const fromEmail = fromSnapshot.val().email;
-      onValue(ref(db, "users/" + to), (toSnapshot) => {
+      get(ref(db, "users/" + to)).then((toSnapshot) => {
         console.log("Second value fetched.");
         const toEmail = toSnapshot.val().email;
         if (Number(party) === Party.SENDER) {
