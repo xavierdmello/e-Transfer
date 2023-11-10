@@ -1,7 +1,7 @@
 import { ethers, parseEther, NonceManager } from "ethers";
 import eTransferAbi from "../abi/eTransferAbi";
 import "dotenv/config";
-import { ref, set, onValue, onChildAdded, onChildChanged,get } from "firebase/database";
+import { ref, set, onValue, onChildAdded, onChildChanged, get } from "firebase/database";
 import db from "./firebase";
 import { ETRANSFER_ADDRESS, TOKEN_ADDRESS } from "../config";
 import tokenAbi from "../abi/tokenAbi";
@@ -145,7 +145,7 @@ async function main() {
               text:
                 "Hi " +
                 toEmail +
-                ", " +
+                ",\n\n" +
                 fromName +
                 " sent you $" +
                 ethers.formatEther(amount) +
@@ -185,7 +185,13 @@ async function main() {
             from: "etransfer@xavierdmello.com",
             subject: "INTERAC e-Transfer: " + toEmail + " accepted your money transfer.",
             text:
-              "Hi " + fromName + ", The money transfer you sent to " + toEmail + " for the amount of $" + ethers.formatEther(amount) + " (USD) was accepted.",
+              "Hi " +
+              fromName +
+              ",\n\nThe money transfer you sent to " +
+              toEmail +
+              " for the amount of $" +
+              ethers.formatEther(amount) +
+              " (USD) was accepted.",
           };
           sgMail
             .send(msg)
@@ -205,7 +211,7 @@ async function main() {
             to: fromEmail,
             from: "etransfer@xavierdmello.com",
             subject: "INTERAC e-Transfer: Your money transfer to " + toEmail + " was deposited.",
-            text: "Hi " + fromName + ", The $" + ethers.formatEther(amount) + " (USD) you sent to " + toEmail + " has been sucessfully deposited.",
+            text: "Hi " + fromName + ",\n\nThe $" + ethers.formatEther(amount) + " (USD) you sent to " + toEmail + " has been sucessfully deposited.",
           };
           sgMail
             .send(msg)
@@ -225,7 +231,7 @@ async function main() {
             text:
               "Hi " +
               toEmail +
-              ", " +
+              ",\n\n" +
               fromName +
               " has sent you $" +
               ethers.formatEther(amount) +
@@ -256,6 +262,7 @@ async function main() {
     get(ref(db, "users/" + from)).then((fromSnapshot) => {
       console.log("Value fetched.");
       const fromEmail = fromSnapshot.val().email;
+      const fromName = fromSnapshot.val().name;
       get(ref(db, "users/" + to)).then((toSnapshot) => {
         console.log("Second value fetched.");
         const toEmail = toSnapshot.val().email;
@@ -264,7 +271,7 @@ async function main() {
             to: fromEmail,
             from: "etransfer@xavierdmello.com",
             subject: "INTERAC e-Transfer: Your transfer was cancelled.",
-            text: "Hi, Your transfer of $" + ethers.formatEther(amount) + " (USD) to " + to + " was cancelled by you.",
+            text: "Hi " + fromName + ",\n\nYour transfer of $" + ethers.formatEther(amount) + " (USD) to " + to + " was cancelled by you.",
           };
           sgMail
             .send(msg)
@@ -281,7 +288,7 @@ async function main() {
             to: toEmail,
             from: "etransfer@xavierdmello.com",
             subject: "INTERAC e-Transfer: Transfer cancelled.",
-            text: "Hi, The transfer of $" + ethers.formatEther(amount) + " (USD) from " + from + " to you was cancelled by the sender.",
+            text: "Hi,\n\nThe transfer of $" + ethers.formatEther(amount) + " (USD) from " + from + " to you was cancelled by the sender.",
           };
           sgMail
             .send(msg)
@@ -298,7 +305,7 @@ async function main() {
             to: fromEmail,
             from: "etransfer@xavierdmello.com",
             subject: "INTERAC e-Transfer: Your transfer was cancelled.",
-            text: "Hi, Your transfer of $" + ethers.formatEther(amount) + " (USD) to " + to + " was cancelled by the recipient.",
+            text: "Hi " + fromName + ",\n\nYour transfer of $" + ethers.formatEther(amount) + " (USD) to " + to + " was cancelled by the recipient.",
           };
           sgMail
             .send(msg)
@@ -315,7 +322,7 @@ async function main() {
             to: toEmail,
             from: "etransfer@xavierdmello.com",
             subject: "INTERAC e-Transfer: Transfer cancelled.",
-            text: "Hi, The transfer of $" + ethers.formatEther(amount) + " (USD) from " + from + " to you was cancelled by you.",
+            text: "Hi,\n\nThe transfer of $" + ethers.formatEther(amount) + " (USD) from " + from + " to you was cancelled by you.",
           };
           sgMail
             .send(msg)
