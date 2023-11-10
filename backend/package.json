@@ -1,10 +1,10 @@
 {
   "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
     "@types/node": "^20.7.1",
     "dotenv": "^16.3.1",
     "ethers": "^6.7.1",
     "firebase": "^10.3.1",
-    "postmark": "^3.0.19",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },

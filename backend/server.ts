@@ -1,18 +1,17 @@
 import { ethers, parseEther, NonceManager } from "ethers";
 import eTransferAbi from "../abi/eTransferAbi";
 import "dotenv/config";
-import * as postmark from "postmark";
 import { ref, set, onValue, onChildAdded, onChildChanged } from "firebase/database";
 import db from "./firebase";
 import { ETRANSFER_ADDRESS, TOKEN_ADDRESS } from "../config";
-
 import tokenAbi from "../abi/tokenAbi";
 
 const RPC = process.env.RPC!;
-const POSTMARK_KEY = process.env.POSTMARK_KEY!;
 const PRIVATE_KEY = process.env.PRIVATE_KEY!;
+const SENDGRID_KEY = process.env.SENDGRID_KEY!;
 
-let client = new postmark.ServerClient(POSTMARK_KEY);
+const sgMail = require("@sendgrid/mail");
+sgMail.setApiKey(SENDGRID_KEY);
 
 // Order of events:
 // 1. On startup: server goes through all account in the database, makes sure they're linked, and if not, links them.
@@ -58,7 +57,7 @@ async function main() {
 
           if (account && emailHash) {
             try {
-              await delay(Math.random() * 10_000) // Random delay to prevent RPC rate limit
+              await delay(Math.random() * 10_000); // Random delay to prevent RPC rate limit
               const isLinked: boolean = await isAccountLinked(account);
 
               if (isLinked === false) {
@@ -139,11 +138,11 @@ async function main() {
           if (snapshot.exists()) {
             const fromName = snapshot.val().name;
 
-            client.sendEmail({
-              From: "etransfer@xavierdmello.com",
-              To: toEmail,
-              Subject: "INTERAC e-Transfer: " + fromName + " sent you money.",
-              TextBody:
+            const msg = {
+              to: toEmail,
+              from: "etransfer@xavierdmello.com",
+              subject: "INTERAC e-Transfer: " + fromName + " sent you money.",
+              text:
                 "Hi " +
                 toEmail +
                 ", " +
@@ -151,14 +150,24 @@ async function main() {
                 " sent you $" +
                 ethers.formatEther(amount) +
                 " (USD). Deposit the transfer now: https://etransfer.xavierdmello.com/",
-            });
-            console.log("Sent pending transfer email to " + toEmail + " for " + ethers.formatEther(amount) + "USD.");
+            };
+    
+            sgMail
+              .send(msg)
+              .then(() => {
+                console.log("Sent pending transfer email to " + toEmail + " for " + ethers.formatEther(amount) + "USD.");
+              })
+              .catch((error: any) => {
+                if (error instanceof Error) {
+                  console.error(error);
+                }
+              });
           } else {
-            console.error("no snapshot for " + from)
+            console.error("no snapshot for " + from);
           }
         });
       } else {
-        console.error("no snapshot for " + to)
+        console.error("no snapshot for " + to);
       }
     });
   });
@@ -171,32 +180,49 @@ async function main() {
       if (autodeposit === false) {
         onValue(ref(db, "users/" + to), (snapshot) => {
           const toEmail = snapshot.val().email;
-
-          client.sendEmail({
-            From: "etransfer@xavierdmello.com",
-            To: fromEmail,
-            Subject: "INTERAC e-Transfer: " + toEmail + " accepted your money transfer.",
-            TextBody:
+          const msg = {
+            to: fromEmail,
+            from: "etransfer@xavierdmello.com",
+            subject: "INTERAC e-Transfer: " + toEmail + " accepted your money transfer.",
+            text:
               "Hi " + fromName + ", The money transfer you sent to " + toEmail + " for the amount of $" + ethers.formatEther(amount) + " (USD) was accepted.",
-          });
-          console.log("Sent transfer accepted email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
+          };
+          sgMail
+            .send(msg)
+            .then(() => {
+              console.log("Sent transfer accepted email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
+            })
+            .catch((error: any) => {
+              if (error instanceof Error) {
+                console.error(error);
+              }
+            });
         });
       } else {
         onValue(ref(db, "users/" + to), (snapshot) => {
           const toEmail = snapshot.val().email;
-          client.sendEmail({
-            From: "etransfer@xavierdmello.com",
-            To: fromEmail,
-            Subject: "INTERAC e-Transfer: Your money transfer to " + toEmail + " was deposited.",
-            TextBody: "Hi " + fromName + ", The $" + ethers.formatEther(amount) + " (USD) you sent to " + toEmail + " has been sucessfully deposited.",
-          });
-          console.log("Sent transfer deposited automatically email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
+          let msg = {
+            to: fromEmail,
+            from: "etransfer@xavierdmello.com",
+            subject: "INTERAC e-Transfer: Your money transfer to " + toEmail + " was deposited.",
+            text: "Hi " + fromName + ", The $" + ethers.formatEther(amount) + " (USD) you sent to " + toEmail + " has been sucessfully deposited.",
+          };
+          sgMail
+            .send(msg)
+            .then(() => {
+              console.log("Sent transfer deposited automatically email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
+            })
+            .catch((error: any) => {
+              if (error instanceof Error) {
+                console.error(error);
+              }
+            });
 
-          client.sendEmail({
-            From: "etransfer@xavierdmello.com",
-            To: toEmail,
-            Subject: "INTERAC e-Transfer: A money transfer from " + fromName + " has been automatically deposited.",
-            TextBody:
+          msg = {
+            to: toEmail,
+            from: "etransfer@xavierdmello.com",
+            subject: "INTERAC e-Transfer: A money transfer from " + fromName + " has been automatically deposited.",
+            text:
               "Hi " +
               toEmail +
               "," +
@@ -204,8 +230,17 @@ async function main() {
               " has sent you $" +
               ethers.formatEther(amount) +
               " (USD) and the money has been automatically deposited into your account.",
-          });
-          console.log("Sent transfer received and deposited automatically email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
+          };
+          sgMail
+            .send(msg)
+            .then(() => {
+              console.log("Sent transfer received and deposited automatically email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
+            })
+            .catch((error: any) => {
+              if (error instanceof Error) {
+                console.error(error);
+              }
+            });
         });
       }
     });
@@ -225,35 +260,73 @@ async function main() {
         console.log("Second value fetched.");
         const toEmail = toSnapshot.val().email;
         if (Number(party) === Party.SENDER) {
-          client.sendEmail({
-            From: "etransfer@xavierdmello.com",
-            To: fromEmail,
-            Subject: "INTERAC e-Transfer: Your transfer was cancelled.",
-            TextBody: "Hi, Your transfer of $" + ethers.formatEther(amount) + " (USD) to " + to + " was cancelled by you.",
-          });
-          console.log("Sent transfer cancelled email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
-          client.sendEmail({
-            From: "etransfer@xavierdmello.com",
-            To: toEmail,
-            Subject: "INTERAC e-Transfer: Transfer cancelled.",
-            TextBody: "Hi, The transfer of $" + ethers.formatEther(amount) + " (USD) from " + from + " to you was cancelled by the sender.",
-          });
-          console.log("Sent transfer cancelled email to " + toEmail + " for " + ethers.formatEther(amount) + "USD.");
+          let msg = {
+            to: fromEmail,
+            from: "etransfer@xavierdmello.com",
+            subject: "INTERAC e-Transfer: Your transfer was cancelled.",
+            text: "Hi, Your transfer of $" + ethers.formatEther(amount) + " (USD) to " + to + " was cancelled by you.",
+          };
+          sgMail
+            .send(msg)
+            .then(() => {
+              console.log("Sent transfer cancelled email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
+            })
+            .catch((error: any) => {
+              if (error instanceof Error) {
+                console.error(error);
+              }
+            });
+
+          msg = {
+            to: toEmail,
+            from: "etransfer@xavierdmello.com",
+            subject: "INTERAC e-Transfer: Transfer cancelled.",
+            text: "Hi, The transfer of $" + ethers.formatEther(amount) + " (USD) from " + from + " to you was cancelled by the sender.",
+          };
+          sgMail
+            .send(msg)
+            .then(() => {
+              console.log("Sent transfer cancelled email to " + toEmail + " for " + ethers.formatEther(amount) + "USD.");
+            })
+            .catch((error: any) => {
+              if (error instanceof Error) {
+                console.error(error);
+              }
+            });
         } else if (Number(party) === Party.RECIPIENT) {
-          client.sendEmail({
-            From: "etransfer@xavierdmello.com",
-            To: fromEmail,
-            Subject: "INTERAC e-Transfer: Your transfer was cancelled.",
-            TextBody: "Hi, Your transfer of $" + ethers.formatEther(amount) + " (USD) to " + to + " was cancelled by the recipient.",
-          });
-          console.log("Sent transfer cancelled email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
-          client.sendEmail({
-            From: "etransfer@xavierdmello.com",
-            To: toEmail,
-            Subject: "INTERAC e-Transfer: Transfer cancelled.",
-            TextBody: "Hi, The transfer of $" + ethers.formatEther(amount) + " (USD) from " + from + " to you was cancelled by you.",
-          });
-          console.log("Sent transfer cancelled email to " + toEmail + " for " + ethers.formatEther(amount) + "USD.");
+          let msg = {
+            to: fromEmail,
+            from: "etransfer@xavierdmello.com",
+            subject: "INTERAC e-Transfer: Your transfer was cancelled.",
+            text: "Hi, Your transfer of $" + ethers.formatEther(amount) + " (USD) to " + to + " was cancelled by the recipient.",
+          };
+          sgMail
+            .send(msg)
+            .then(() => {
+              console.log("Sent transfer cancelled email to " + fromEmail + " for " + ethers.formatEther(amount) + "USD.");
+            })
+            .catch((error: any) => {
+              if (error instanceof Error) {
+                console.error(error);
+              }
+            });
+
+          msg = {
+            to: toEmail,
+            from: "etransfer@xavierdmello.com",
+            subject: "INTERAC e-Transfer: Transfer cancelled.",
+            text: "Hi, The transfer of $" + ethers.formatEther(amount) + " (USD) from " + from + " to you was cancelled by you.",
+          };
+          sgMail
+            .send(msg)
+            .then(() => {
+              console.log("Sent transfer cancelled email to " + toEmail + " for " + ethers.formatEther(amount) + "USD.");
+            })
+            .catch((error: any) => {
+              if (error instanceof Error) {
+                console.error(error);
+              }
+            });
         } else {
           console.log("Error sending transfer cancelled email. Party is not SENDER or RECIPIENT.");
           console.log(party);
